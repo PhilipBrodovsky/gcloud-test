@@ -47,7 +47,7 @@ app.get("/", async (req, res) => {
         .find()
         .toArray();
 
-    res.json(users);
+    res.json({ users });
 });
 
 // Start the server
