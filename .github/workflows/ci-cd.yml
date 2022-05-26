@@ -4,6 +4,10 @@ jobs:
   CICD:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+
+      - run: ls
+
       - id: "auth"
         uses: "google-github-actions/auth@v0"
         with:
