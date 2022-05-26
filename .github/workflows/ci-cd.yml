@@ -9,7 +9,7 @@ jobs:
       - name: ls
         run: |
           ls
-          cd
+          cd node1
 
       - id: "auth"
         uses: "google-github-actions/auth@v0"
@@ -21,4 +21,6 @@ jobs:
       - name: "Use gcloud CLI"
         run: "gcloud info"
       - name: deploy
-        run: gcloud app deploy
+        run: |
+          ls
+          gcloud app deploy
