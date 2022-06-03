@@ -5,12 +5,14 @@
     "main": "app.js",
     "scripts": {
         "start": "node app.js",
-        "deploy": "gcloud app deploy --quiet"
+        "deploy": "gcloud app deploy --quiet",
+        "browse": "gcloud app browse"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "axios": "^0.27.2",
         "express": "^4.18.1",
         "mongodb": "^4.6.0"
     }

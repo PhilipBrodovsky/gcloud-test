@@ -17,6 +17,8 @@
 // [START gae_node_request_example]
 const express = require("express");
 
+const axios = require("axios").default;
+
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
 let client = null;
@@ -35,17 +37,26 @@ async function dbConnect() {
     return client;
 }
 
+// https://VERSION-dot-SERVICE-dot-PROJECT_ID.REGION_ID.r.appspot.com
+
 const app = express();
 
 app.set("trust proxy", true);
 
 app.get("/", async (req, res) => {
     const client = await dbConnect();
+
+    const res1 = await axios.get(
+        "https://node2-dot-tutorial-351208.ew.r.appspot.com/"
+    );
+    console.log("data", res1.data);
     const users = await client
         .db("website")
         .collection("users")
         .find()
         .toArray();
+
+    res.setHeader("rows-count", 10);
 
     res.json({ users });
 });
