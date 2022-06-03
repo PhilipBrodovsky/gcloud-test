@@ -15,104 +15,81 @@ import MailIcon from "@mui/icons-material/Mail";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
+import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
 
 interface Props {
-    /**
-     * Injected by the documentation to work in an iframe.
-     * You won't need it on your project.
-     */
-    window?: () => Window;
+	open: boolean;
+	onClose: () => void;
 }
 
 export function Drawer(props: Props) {
-    const { window } = props;
-    const [mobileOpen, setMobileOpen] = React.useState(false);
+	const { open, onClose } = props;
 
-    const handleDrawerToggle = () => {
-        setMobileOpen(!mobileOpen);
-    };
+	const navigate = useNavigate();
 
-    const drawer = (
-        <div>
-            <Toolbar />
-            <Divider />
-            <List>
-                {["Inbox", "Starred", "Send email", "Drafts"].map(
-                    (text, index) => (
-                        <ListItem key={text} disablePadding>
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    {index % 2 === 0 ? (
-                                        <InboxIcon />
-                                    ) : (
-                                        <MailIcon />
-                                    )}
-                                </ListItemIcon>
-                                <ListItemText primary={text} />
-                            </ListItemButton>
-                        </ListItem>
-                    )
-                )}
-            </List>
-            <Divider />
-            <List>
-                {["All mail", "Trash", "Spam"].map((text, index) => (
-                    <ListItem key={text} disablePadding>
-                        <ListItemButton>
-                            <ListItemIcon>
-                                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                            </ListItemIcon>
-                            <ListItemText primary={text} />
-                        </ListItemButton>
-                    </ListItem>
-                ))}
-            </List>
-        </div>
-    );
+	const drawer = (
+		<div>
+			<Toolbar>
+				<Typography variant="h5">EasyLife</Typography>
+			</Toolbar>
+			<Divider />
+			<List>
+				{["Groups", "Players"].map((text, index) => (
+					<ListItem key={text} disablePadding>
+						<ListItemButton
+							onClick={() => {
+								console.log(text);
+								navigate("/" + text.toLowerCase());
+							}}
+						>
+							<ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+							<ListItemText primary={text} />
+						</ListItemButton>
+					</ListItem>
+				))}
+			</List>
+		</div>
+	);
 
-    const container =
-        window !== undefined ? () => window().document.body : undefined;
-
-    return (
-        <Box
-            component="nav"
-            sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-            aria-label="mailbox folders"
-        >
-            {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-            <MuiDrawer
-                container={container}
-                variant="temporary"
-                open={mobileOpen}
-                onClose={handleDrawerToggle}
-                ModalProps={{
-                    keepMounted: true, // Better open performance on mobile.
-                }}
-                sx={{
-                    display: { xs: "block", sm: "none" },
-                    "& .MuiDrawer-paper": {
-                        boxSizing: "border-box",
-                        width: drawerWidth,
-                    },
-                }}
-            >
-                {drawer}
-            </MuiDrawer>
-            <MuiDrawer
-                variant="permanent"
-                sx={{
-                    display: { xs: "none", sm: "block" },
-                    "& .MuiDrawer-paper": {
-                        boxSizing: "border-box",
-                        width: drawerWidth,
-                    },
-                }}
-                open
-            >
-                {drawer}
-            </MuiDrawer>
-        </Box>
-    );
+	return (
+		<Box
+			component="nav"
+			sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+			aria-label="mailbox folders"
+		>
+			{/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+			<MuiDrawer
+				variant="temporary"
+				open={open}
+				onClose={onClose}
+				ModalProps={{
+					keepMounted: true, // Better open performance on mobile.
+				}}
+				sx={{
+					display: { xs: "block", sm: "none" },
+					"& .MuiDrawer-paper": {
+						boxSizing: "border-box",
+						width: drawerWidth,
+					},
+				}}
+			>
+				{drawer}
+			</MuiDrawer>
+			<MuiDrawer
+				variant="permanent"
+				sx={{
+					display: { xs: "none", sm: "block" },
+					"& .MuiDrawer-paper": {
+						boxSizing: "border-box",
+						width: drawerWidth,
+					},
+				}}
+				open
+			>
+				{drawer}
+			</MuiDrawer>
+		</Box>
+	);
 }
