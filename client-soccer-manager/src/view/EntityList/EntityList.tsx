@@ -27,7 +27,7 @@ interface Props {
 export function EntityList(props: any) {
 	const { entity, items } = props;
 
-	const EntityItem = entity === "group" ? GroupCard : PlayerCard;
+	const EntityItem = entity === "groups" ? GroupCard : PlayerCard;
 	return (
 		<Stack direction="row" gap={2} flexWrap="wrap" justifyContent="center">
 			{items.map((item) => {

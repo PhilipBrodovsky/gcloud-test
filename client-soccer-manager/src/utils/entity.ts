@@ -1,9 +1,9 @@
-export type entityName = "group" | "player";
+export type entityName = "groups" | "players";
 
 export const getEntityData = (entity: entityName) => {
-	const colName = entity + "s";
-	return {
-		collection: colName,
-		path: "/" + colName,
-	};
+    const colName = entity?.toLowerCase();
+    return {
+        collection: colName,
+        path: "/" + colName,
+    };
 };
