@@ -48,9 +48,30 @@ export const useFirebaseApi = () => {
 		return unsubscribe;
 	};
 
+	const subscribeDoc = ({
+		collectionName,
+		docId,
+		callback,
+	}: {
+		collectionName: string;
+		docId: string;
+		callback: (result: { item: any }) => void;
+	}) => {
+		const docRef = doc(firestoreDB, collectionName, docId);
+		const unsubscribe = onSnapshot(docRef, (doc) => {
+			const item = {
+				id: doc.id,
+				...doc.data(),
+			};
+			callback({ item });
+		});
+		return unsubscribe;
+	};
+
 	return {
 		firesotre: {
 			createDoc,
+			subscribeDoc,
 			subscribeCollection,
 		},
 	};
