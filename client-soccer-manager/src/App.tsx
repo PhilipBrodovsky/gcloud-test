@@ -302,6 +302,7 @@ function Entity() {
 		});
 		return () => unsub();
 	}, [params.entity]);
+
 	const addCycle = () => {};
 
 	if (!item) return null;
@@ -309,11 +310,28 @@ function Entity() {
 	console.log("====================================");
 	console.log("entity", params, entityData);
 	console.log("====================================");
+
+	if (params.entity === "groups") {
+		return (
+			<Stack
+				sx={{
+					background: "red",
+				}}
+			>
+				<GroupPage />
+			</Stack>
+		);
+	}
+
 	return (
 		<Stack>
 			<Button>{item.name}</Button>
 		</Stack>
 	);
+}
+
+function GroupPage() {
+	return <div>group page</div>;
 }
 
 function App() {
