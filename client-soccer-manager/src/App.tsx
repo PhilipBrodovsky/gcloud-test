@@ -325,17 +325,18 @@ function Entity() {
 
     const [item, setItem] = useState(null);
 
-    useEffect(() => {
-        const unsub = firebaseApi.firesotre.subscribeDoc({
-            collectionName: entityData.collection,
-            docId: params.id!,
-            callback: (res) => {
-                console.log("ress", res);
-                setItem(res.item);
-            },
-        });
-        return () => unsub();
-    }, [params.entity]);
+	useEffect(() => {
+		const unsub = firebaseApi.firesotre.subscribeDoc({
+			collectionName: entityData.collection,
+			docId: params.id!,
+			callback: (res) => {
+				console.log("ress", res);
+				setItem(res.item);
+			},
+		});
+		return () => unsub();
+	}, [params.entity]);
+
     const addCycle = async () => {
         const res = await firebaseApi.firesotre.createDoc({
             collectionName: `${entityData.collection}/${params.id}/cycles`,
@@ -346,9 +347,22 @@ function Entity() {
 
     if (!item) return null;
 
-    console.log("====================================");
-    console.log("entity", params, entityData);
-    console.log("====================================");
+	console.log("====================================");
+	console.log("entity", params, entityData);
+	console.log("====================================");
+
+	if (params.entity === "groups") {
+		return (
+			<Stack
+				sx={{
+					background: "red",
+				}}
+			>
+				<GroupPage />
+			</Stack>
+		);
+	}
+
     return (
         <Stack>
             <TextField label="cycle name" />
@@ -358,6 +372,10 @@ function Entity() {
             <Button onClick={addCycle}>{item.name}</Button>
         </Stack>
     );
+}
+
+function GroupPage() {
+	return <div>group page</div>;
 }
 
 function App() {
