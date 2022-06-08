@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run : cd client-home
       - run: |
+          cd client-home
           ls
           npm ci && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
