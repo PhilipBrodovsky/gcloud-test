@@ -3,7 +3,6 @@ import logo from "./logo.svg";
 import "./App.css";
 import {
     AppBar,
-    Avatar,
     Button,
     Card,
     CardActionArea,
