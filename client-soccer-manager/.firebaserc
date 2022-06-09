@@ -5,8 +5,8 @@
   "targets": {
     "easylife-55a85": {
       "hosting": {
-        "soccer-namager": [
-          "soccer-magager"
+        "soccer-manager": [
+          "soccer-manager"
         ]
       }
     }
