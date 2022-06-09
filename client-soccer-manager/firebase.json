@@ -3,10 +3,10 @@
         "public": "dist",
         "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
         "hosting": [
-          {
-            "target" : "soccer-manager",
-            "dist"
-          }
+            {
+                "target": "soccer-manager",
+                "public": "dist"
+            }
         ],
         "rewrites": [
             {
