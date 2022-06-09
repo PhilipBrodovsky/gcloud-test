@@ -22,6 +22,6 @@ jobs:
           entryPoint: ./client-soccer-manager
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_EASYLIFE_55A85 }}"
-          channelId: soccer-manager
+          channelId: live
           projectId: easylife-55a85
           target: soccer-manager
