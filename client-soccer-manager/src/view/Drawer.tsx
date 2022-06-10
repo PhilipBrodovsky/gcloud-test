@@ -23,41 +23,46 @@ import { ReactNode } from "react";
 const drawerWidth = 240;
 
 interface Props {
-    open: boolean;
-    onClose: () => void;
-    content?: ReactNode;
+	open: boolean;
+	onClose: () => void;
+	content?: ReactNode;
 }
 
 export function Drawer(props: Props) {
-    const { open, onClose, content } = props;
-    const navigate = useNavigate();
-    const isMobile = useMediaQuery("(max-width:600px)");
+	const { open, onClose, content } = props;
+	const navigate = useNavigate();
+	const isMobile = useMediaQuery("(max-width:600px)");
 
-    return (
-        <Box
-            component="nav"
-            sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-        >
-            <MuiDrawer
-                variant={isMobile ? "temporary" : "permanent"}
-                open={open}
-                onClose={onClose}
-                ModalProps={{
-                    keepMounted: true, // Better open performance on mobile.
-                }}
-                sx={{
-                    "& .MuiDrawer-paper": {
-                        boxSizing: "border-box",
-                        width: drawerWidth,
-                    },
-                }}
-            >
-                <Toolbar>
-                    <Typography variant="h5">EasyLife</Typography>
-                </Toolbar>
-                <Divider />
-                {content}
-            </MuiDrawer>
-        </Box>
-    );
+	return (
+		<Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
+			<MuiDrawer
+				variant={isMobile ? "temporary" : "permanent"}
+				open={open}
+				onClose={onClose}
+				ModalProps={{
+					keepMounted: true, // Better open performance on mobile.
+				}}
+				sx={{
+					"& .MuiDrawer-paper": {
+						boxSizing: "border-box",
+						width: drawerWidth,
+					},
+				}}
+			>
+				<Toolbar>
+					<Typography
+						onClick={() => {
+							navigate("/");
+						}}
+						sx={{ cursor: "pointer" }}
+						variant="h5"
+					>
+						EasyLife
+					</Typography>
+				</Toolbar>
+				<Divider />
+				{content}
+			</MuiDrawer>
+		</Box>
+	);
 }

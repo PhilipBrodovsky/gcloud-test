@@ -19,10 +19,9 @@ import { Favorite, Menu, MoreVert } from "@mui/icons-material";
 import { entityName, getEntityData } from "utils/entity";
 import { useNavigate } from "react-router-dom";
 
-interface Props {
-	entity: entityName;
-	items: any[];
-}
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useFirebaseApi } from "firebase-api";
+import { Group, Player } from "Entities";
 
 export function EntityList(props: any) {
 	const { entity, items } = props;
@@ -37,8 +36,9 @@ export function EntityList(props: any) {
 	);
 }
 
-export function PlayerCard(props: any) {
+export function PlayerCard(props: { item: Player; entity: entityName }) {
 	const { item, entity } = props;
+	const firebaseApi = useFirebaseApi();
 
 	const navigate = useNavigate();
 	const entityData = getEntityData(entity);
@@ -48,8 +48,17 @@ export function PlayerCard(props: any) {
 			<CardHeader
 				avatar={<Avatar>{parseInt(Math.random() * (99 - 50) + 50)}</Avatar>}
 				action={
-					<IconButton>
-						<MoreVert />
+					<IconButton
+						onClick={() => {
+							// todo: remove player form groups
+							firebaseApi.firesotre.deleteDocument({
+								collectionName: entityData.collection,
+								id: item.id,
+							});
+							item.image && firebaseApi.storage.deleteFile(item.image.fullPath);
+						}}
+					>
+						<DeleteIcon />
 					</IconButton>
 				}
 				title={item.name}
@@ -66,7 +75,7 @@ export function PlayerCard(props: any) {
 					}}
 					alt=""
 					component="img"
-					image="/download.jpg"
+					src={item.image?.url}
 				/>
 				<CardContent></CardContent>
 			</CardActionArea>
@@ -79,21 +88,30 @@ export function PlayerCard(props: any) {
 	);
 }
 
-export function GroupCard(props: Props) {
+export function GroupCard(props: { item: Group; entity: entityName }) {
 	const { entity, item } = props;
 
 	const navigate = useNavigate();
 	const entityData = getEntityData(entity);
+	const firebaseApi = useFirebaseApi();
 	return (
 		<Card sx={{ maxWidth: 345 }}>
 			<CardHeader
 				avatar={<Avatar>S</Avatar>}
 				action={
-					<IconButton>
-						<MoreVert />
+					<IconButton
+						onClick={() => {
+							firebaseApi.firesotre.deleteDocument({
+								collectionName: entityData.collection,
+								id: item.id,
+							});
+							item.image && firebaseApi.storage.deleteFile(item.image.fullPath);
+						}}
+					>
+						<DeleteIcon />
 					</IconButton>
 				}
-				title="Soccer"
+				title={item.name}
 				subheader={new Date().toDateString()}
 			/>
 			<CardActionArea
@@ -101,7 +119,7 @@ export function GroupCard(props: Props) {
 					navigate(`${entityData.path}/${item.id}`);
 				}}
 			>
-				<CardMedia alt="" component="img" image="/soccer.jpeg" height="200" />
+				<CardMedia alt="" component="img" image={item.image?.url} height="200" />
 				<CardContent>
 					<Typography>
 						Lorem ipsum dolor sit amet consectetur adipisicing elit. Aut quae laborum odio
@@ -109,7 +127,6 @@ export function GroupCard(props: Props) {
 						voluptatem commodi odit corrupti quam totam distinctio!
 					</Typography>
 				</CardContent>
-				ƒ
 			</CardActionArea>
 			<CardActions>
 				<IconButton>
