@@ -1,5 +1,14 @@
 {
   "projects": {
     "default": "easylife-55a85"
+  },
+  "targets": {
+    "easylife-55a85": {
+      "hosting": {
+        "soccer-manager": [
+          "soccer-manager"
+        ]
+      }
+    }
   }
 }
