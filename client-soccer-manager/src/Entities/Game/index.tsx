@@ -26,7 +26,6 @@ interface Pross {
 	game: Game;
 }
 export const GamePage = (props: Props) => {
-	console.log("props", props);
 
 	const { game } = props;
 
@@ -36,10 +35,6 @@ export const GamePage = (props: Props) => {
 	const timerRef = useRef(null);
 
 	const location = useLocation();
-	console.log("====================================");
-	console.log(location);
-	console.log("====================================");
-
 	const firebaseApi = useFirebaseApi();
 
 	useEffect(() => {

@@ -16,7 +16,6 @@ export function EntityPage() {
 		subId2: string;
 	}>();
 
-	console.log("params", params);
 
 	const itemId = params.subEntity2Id || params.subId || params.id;
 

@@ -37,7 +37,6 @@ export interface Group {
 
 export const useGroupForm = () => {
 	const players = useAppSelector((state) => state.players.list);
-	console.log("form", players);
 
 	const fields = [
 		{ name: "name", label: "Name", defaultValue: "" },
@@ -74,8 +73,6 @@ export const GroupPage = (props: Props) => {
 	const location = useLocation();
 
 	const cycles = useAppSelector((state) => state.cycles.map[group.id]);
-
-	console.log("players", players, group.players);
 
 	useEffect(() => {
 		const unsubscribe = firebaseApi.firesotre.subscribeCollection({

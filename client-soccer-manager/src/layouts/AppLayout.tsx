@@ -17,7 +17,6 @@ export function AppLayout() {
 						<ListItem key={text} disablePadding>
 							<ListItemButton
 								onClick={() => {
-									console.log(text);
 									navigate("/" + text.toLowerCase());
 								}}
 							>

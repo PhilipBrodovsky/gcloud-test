@@ -63,9 +63,6 @@ export const CyclePage = (props: Props) => {
 	const cycles = useAppSelector((state) => state.cycles.map[params.groupId]);
 	const cycle = cycles?.find((c) => c.id === params.cycleId);
 
-	console.log("====================================");
-	console.log("cycle", cycle);
-	console.log("====================================");
 
 	const groupForm = useCycleForm();
 

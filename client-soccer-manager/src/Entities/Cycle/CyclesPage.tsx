@@ -24,9 +24,6 @@ export function CyclesPage() {
 	const firebaseApi = useFirebaseApi();
 
 	const cycles = useAppSelector((state) => state.cycles.map[params.groupId]);
-	console.log("====================================");
-	console.log("cycles", cycles);
-	console.log("====================================");
 
 	useEffect(() => {
 		const unsubscribe = firebaseApi.firesotre.subscribeCollection({
