@@ -12,6 +12,7 @@ import {
 	onSnapshot,
 	setDoc,
 	updateDoc,
+	increment,
 } from "firebase/firestore";
 
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
@@ -167,6 +168,7 @@ export const useFirebaseApi = () => {
 			subscribeDoc,
 			subscribeCollection,
 			updateDocument,
+			increment,
 		},
 	};
 };

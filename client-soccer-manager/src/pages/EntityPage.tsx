@@ -4,39 +4,49 @@ import { useEffect, useState } from "react";
 import { Button, Stack, TextField } from "@mui/material";
 
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { GroupPage, PlayerPage } from "Entities";
+import { CyclePage, GamePage, GroupPage, PlayerPage } from "Entities";
 
 export function EntityPage() {
-	const params = useParams<{ entity: entityName; id: string }>();
+	const params = useParams<{
+		entity: entityName;
+		id: string;
+		subEntity: string;
+		subId: string;
+		subEntity2: string;
+		subId2: string;
+	}>();
+
+	console.log("params", params);
+
+	const itemId = params.subEntity2Id || params.subId || params.id;
+
 	const entityData = getEntityData(params.entity!);
 	const navigate = useNavigate();
 	const location = useLocation();
 	const firebaseApi = useFirebaseApi();
-	console.log(location);
 
 	const [item, setItem] = useState(null);
 
 	useEffect(() => {
 		const unsub = firebaseApi.firesotre.subscribeDoc({
-			collectionName: entityData.collection,
-			docId: params.id!,
+			collectionName: location.pathname.split("/").slice(0, -1).join("/"),
+			docId: itemId!,
 			callback: (res) => {
 				setItem(res.item);
 			},
 		});
 		return () => unsub();
-	}, [params.entity]);
-
-	const addCycle = async () => {
-		const res = await firebaseApi.firesotre.createDoc({
-			collectionName: `${entityData.collection}/${params.id}/cycles`,
-			data: { test: 1 },
-		});
-	};
+	}, [itemId]);
 
 	if (!item) return null;
 
-	console.log("item", item);
+	if (params.subEntity2 === "games") {
+		return <GamePage game={item} />;
+	}
+
+	if (params.subEntity === "cycles") {
+		return <CyclePage cycle={item} />;
+	}
 
 	if (params.entity === "groups") {
 		return <GroupPage group={item} />;
@@ -45,14 +55,4 @@ export function EntityPage() {
 	if (params.entity === "players") {
 		return <PlayerPage player={item} />;
 	}
-
-	return (
-		<Stack>
-			<TextField label="cycle name" />
-			<TextField label="players" />
-			<TextField label="teams" />
-			<TextField label="choose teams" />
-			<Button onClick={addCycle}>{item.name}</Button>
-		</Stack>
-	);
 }

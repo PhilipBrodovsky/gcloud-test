@@ -8,15 +8,16 @@ import { useAppSelector } from "store";
 import { entityName } from "utils/entity";
 
 interface FieldProps {
-	field: any;
+	field: Field;
 	value?: any;
 	fullWidth?: boolean;
 	onChange?: (name: string, value: any) => void;
 }
 
 interface Field {
-	name: string;
-	type: string;
+	name?: string;
+	type?: string;
+	label?: string;
 }
 
 export function Field(props: FieldProps) {
@@ -68,12 +69,15 @@ export function Field(props: FieldProps) {
 		);
 	}
 
+	console.log(field);
+	
 	return (
 		<TextField
 			autoComplete="off"
+			type={field.type}
 			fullWidth={fullWidth}
 			onChange={hanldeChange}
-			value={value || field.emptyValue}
+			value={value || field.defaultValue}
 			name={field.name}
 			label={field.label}
 			select={field.type === "select"}
@@ -116,29 +120,22 @@ export const CreateEntity = (props: CreateEntityProps) => {
 	const navigate = useNavigate();
 
 	const [form, setForm] = useState<{ [key: string]: any }>({});
-	console.log("form", form);
 
 	const onChange = (name: string, value: any) => {
 		setForm({ ...form, [name]: value });
 	};
-
-	console.log("====================================");
-	console.log("entityData", entityData);
-	console.log("====================================");
 
 	let formFields = null;
 
 	const createGroup = async () => {
 		const { image, ...rest } = form;
 		const docRef = firebaseApi.firesotre.getDocRef({ collectionName: "groups" })!;
-		console.log("docRef,", docRef);
 
-		const file = await firebaseApi.storage.uploadFile(image, `groups/${docRef.id}`);
+		const file = image && (await firebaseApi.storage.uploadFile(image, `groups/${docRef.id}`));
 		const res = await firebaseApi.firesotre.createDoc({
 			ref: docRef,
 			data: { ...rest, image: file.data },
 		});
-		console.log("res", res);
 
 		setForm({});
 		navigate(entityData.path);
@@ -148,12 +145,11 @@ export const CreateEntity = (props: CreateEntityProps) => {
 		const { image, ...rest } = form;
 		const docRef = firebaseApi.firesotre.getDocRef({ collectionName: "players" })!;
 
-		const file = await firebaseApi.storage.uploadFile(image, `players/${docRef.id}`);
+		const file = image && (await firebaseApi.storage.uploadFile(image, `players/${docRef.id}`));
 		const res = await firebaseApi.firesotre.createDoc({
 			ref: docRef,
-			data: { ...rest, image: file.data },
+			data: { ...rest, image: file?.data || null },
 		});
-		console.log("res", res);
 
 		setForm({});
 		navigate(entityData.path);

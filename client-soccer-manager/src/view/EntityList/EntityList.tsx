@@ -24,11 +24,11 @@ import { useFirebaseApi } from "firebase-api";
 import { Group, Player } from "Entities";
 
 export function EntityList(props: any) {
-	const { entity, items } = props;
+	const { entity, items = [] } = props;
 
 	const EntityItem = entity === "groups" ? GroupCard : PlayerCard;
 	return (
-		<Stack direction="row" gap={2} flexWrap="wrap" justifyContent="center">
+		<Stack width="100%" direction="row" gap={2} flexWrap="wrap" justifyContent="center">
 			{items.map((item) => {
 				return <EntityItem entity={entity} item={item} key={item.id} />;
 			})}

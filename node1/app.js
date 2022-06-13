@@ -49,7 +49,6 @@ app.get("/", async (req, res) => {
     const res1 = await axios.get(
         "https://node2-dot-tutorial-351208.ew.r.appspot.com/"
     );
-    console.log("data", res1.data);
     const users = await client
         .db("website")
         .collection("users")

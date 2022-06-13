@@ -45,10 +45,35 @@ const groupsSlice = createSlice({
 	},
 });
 
+const initialStateCycles: { map: { [key: string]: any } } = {
+	map: {},
+};
+const cyclesSlice = createSlice({
+	name: "cycles",
+	initialState: initialStateCycles,
+	reducers: {
+		set: (state, action: PayloadAction<{ groupId: string; cycles: any[] }>) => {
+			state.map[action.payload.groupId] = action.payload.cycles;
+		},
+	},
+});
+
+const gamesSLice = createSlice({
+	name: "games",
+	initialState: initialStateCycles,
+	reducers: {
+		set: (state, action: PayloadAction<{ cycleId: string; games: any[] }>) => {
+			state.map[action.payload.cycleId] = action.payload.games;
+		},
+	},
+});
+
 export const store = configureStore({
 	reducer: combineReducers({
 		players: playersSlice.reducer,
 		groups: groupsSlice.reducer,
+		cycles: cyclesSlice.reducer,
+		games: gamesSLice.reducer,
 	}),
 	middleware: [],
 });
@@ -69,6 +94,8 @@ export const useActions = () => {
 			dispatch,
 			players: playersSlice.actions,
 			groups: groupsSlice.actions,
+			games: gamesSLice.actions,
+			cycles: cyclesSlice.actions,
 		};
 	}, []);
 	return result;

@@ -14,14 +14,18 @@ import ShareIcon from "@mui/icons-material/Share";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useActions, useAppSelector } from "store";
-import { Button, Divider, Stack } from "@mui/material";
+import { Button, CardActionArea, Divider, Stack } from "@mui/material";
 import { Field } from "view/CreateEntity/CreateEntity";
 import { useEffect, useState } from "react";
 import { useFirebaseApi } from "firebase-api";
 
+import { useNavigate, useLocation } from "react-router-dom";
+
 export interface Group {
 	id: string;
 	name: string;
+	numberOfTeams: number;
+	playersPerTeam: number;
 	image?: {
 		url: string;
 		bucket: string;
@@ -33,9 +37,13 @@ export interface Group {
 
 export const useGroupForm = () => {
 	const players = useAppSelector((state) => state.players.list);
+	console.log("form", players);
+
 	const fields = [
 		{ name: "name", label: "Name", defaultValue: "" },
 		{ name: "image", label: "Image", type: "file", defaultValue: "" },
+		{ name: "numberOfTeams", label: "Number of teams", type: "number", defaultValue: 0 },
+		{ name: "playersPerTeam", label: "Players per team", type: "number", defaultValue: 0 },
 
 		{
 			name: "players",
@@ -59,16 +67,26 @@ export const GroupPage = (props: Props) => {
 	const groupForm = useGroupForm();
 
 	const firebaseApi = useFirebaseApi();
+	const navigate = useNavigate();
 
 	const actions = useActions();
+
+	const location = useLocation();
+
+	const cycles = useAppSelector((state) => state.cycles.map[group.id]);
+
+	console.log("players", players, group.players);
 
 	useEffect(() => {
 		const unsubscribe = firebaseApi.firesotre.subscribeCollection({
 			collectionName: `groups/${group.id}/cycles`,
 			callback: (result) => {
-				console.log("====================================");
-				console.log("result", result);
-				console.log("====================================");
+				actions.dispatch(
+					actions.cycles.set({
+						groupId: group.id,
+						cycles: result.items,
+					})
+				);
 			},
 		});
 		return () => unsubscribe();
@@ -77,7 +95,7 @@ export const GroupPage = (props: Props) => {
 	const createCycle = async () => {
 		const res = await firebaseApi.firesotre.createDoc({
 			collectionName: `groups/${group.id}/cycles`,
-			data: { name: "cycle" },
+			data: { name: "cycle", createDate: new Date().getTime() },
 		});
 	};
 
@@ -95,18 +113,19 @@ export const GroupPage = (props: Props) => {
 			/>
 			<CardMedia component="img" height="194" image={group.image?.url} alt="Paella dish" />
 			<CardContent>
-				<Typography variant="body2" color="text.secondary">
-					Goals: 10
-				</Typography>
-				<Typography variant="body2" color="text.secondary">
-					Assists: 20
-				</Typography>
-				<Typography variant="body2" color="text.secondary">
-					games: 20
-				</Typography>
+				<Stack gap={4}>
+					<Field
+						value={group.numberOfTeams}
+						field={{ name: "numberOfTeams", label: "Number of teams", type: "number" }}
+					/>
+					<Field
+						value={group.playersPerTeam}
+						field={{ name: "playersPerTeam", label: "Players per team", type: "number" }}
+					/>
+				</Stack>
 				<Divider sx={{ my: 2 }} />
 				<Field
-					value={group.players}
+					value={group.players || []}
 					onChange={(_, newPlayers) => {
 						firebaseApi.firesotre.updateDocument({
 							collectionName: "groups",
@@ -145,11 +164,9 @@ export const GroupPage = (props: Props) => {
 					</Button>
 				</Stack>
 				<Stack my={2} direction="row" gap={2} flexWrap="wrap">
-					{group.players?.map((playerId) => {
-						const player = players.find((p) => p.id === playerId);
-						if (!player) return null;
+					{cycles?.map((cycle: any) => {
 						return (
-							<Card key={player.id}>
+							<Card key={cycle.id}>
 								<CardHeader
 									avatar={<Avatar sx={{ bgcolor: red[500] }}>R</Avatar>}
 									action={
@@ -157,9 +174,17 @@ export const GroupPage = (props: Props) => {
 											<MoreVertIcon />
 										</IconButton>
 									}
-									title={player.name}
-									subheader={player.id}
+									title={cycle.name}
+									subheader={new Date(cycle.createDate).toDateString()}
 								/>
+								<CardActionArea
+									onClick={() => {
+										navigate(`${location.pathname}/cycles/${cycle.id}`);
+									}}
+								>
+									<CardMedia component="img" image="/soccer.jpeg" height="120" />
+								</CardActionArea>
+								<CardContent>dsas</CardContent>
 							</Card>
 						);
 					})}

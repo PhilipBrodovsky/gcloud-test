@@ -8,21 +8,16 @@ import { Fab, Stack } from "@mui/material";
 
 export function EntityListPage() {
 	const { entity } = useParams<{ entity: entityName }>();
-	console.log('entity',entity);
-	
+
 	const [entities, setEntities] = useState([]);
 	const navigate = useNavigate();
 	const firebaseApi = useFirebaseApi();
 	const entityData = getEntityData(entity!);
 
 	useEffect(() => {
-		console.log(entityData);
-
 		const unsub = firebaseApi.firesotre.subscribeCollection({
 			collectionName: entityData.collection,
 			callback: (res) => {
-				console.log("res", res);
-
 				setEntities(res.items);
 			},
 		});
@@ -30,7 +25,7 @@ export function EntityListPage() {
 	}, [entity]);
 
 	return (
-		<Stack>
+		<Stack id="EntityListPage" width="100%">
 			<EntityList entity={entity} items={entities} />
 			<Fab
 				onClick={() => navigate(`${entityData.path}/create`)}

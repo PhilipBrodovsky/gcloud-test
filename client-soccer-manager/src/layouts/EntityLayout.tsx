@@ -16,12 +16,12 @@ import InboxIcon from "@mui/icons-material/MoveToInbox";
 import { AppBarWithDrawer } from "components";
 
 export function EntityLayout() {
+
 	const params = useParams<{ entity: entityName; id: string }>();
 	const entityData = getEntityData(params.entity!);
 	const navigate = useNavigate();
 	const location = useLocation();
 	const firebaseApi = useFirebaseApi();
-	console.log(location);
 
 	const content = {
 		groups: {
