@@ -2,26 +2,9 @@ import { useState } from "react";
 
 import MenuIcon from "@mui/icons-material/Menu";
 
-import {
-	AppBar,
-	Avatar,
-	Button,
-	Card,
-	CardActionArea,
-	CardActions,
-	CardContent,
-	CardHeader,
-	CardMedia,
-	CssBaseline,
-	Fab,
-	IconButton,
-	Stack,
-	TextField,
-	Toolbar,
-	Typography,
-	Box,
-	Menu,
-} from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
+import { AppBar, IconButton, Stack, Toolbar, Typography } from "@mui/material";
 import { Drawer } from "view/Drawer";
 
 const drawerWidth = 240;
@@ -52,13 +35,16 @@ export function AppBarWithDrawer(props: any) {
 					>
 						<MenuIcon />
 					</IconButton>
+					<IconButton sx={{ color: "white" }}>
+						<ArrowBackIcon />
+					</IconButton>
 					<Typography variant="h6" noWrap component="div">
 						{title}
 					</Typography>
 				</Toolbar>
 			</AppBar>
 			<Drawer content={drawerContent} open={mobileOpen} onClose={handleDrawerToggle} />
-			<Stack alignItems="center" sx={{ width: `calc(100% - 240px)`, flexGrow: 1, p: 2 }}>
+			<Stack sx={{ width: `calc(100% - 240px)`, flexGrow: 1, p: 2 }}>
 				<Toolbar />
 				{children}
 			</Stack>

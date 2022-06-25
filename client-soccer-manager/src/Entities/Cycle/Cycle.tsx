@@ -21,8 +21,8 @@ import { useFirebaseApi } from "firebase-api";
 
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { useCycleGames } from "hooks";
+import { Teams } from "types";
 
-type Team = string[];
 
 export interface Cycle {
 	id: string;
@@ -34,7 +34,7 @@ export interface Cycle {
 		name: string;
 	};
 	players: string[];
-	teams: Team[];
+	teams: Teams;
 }
 
 export const useCycleForm = () => {

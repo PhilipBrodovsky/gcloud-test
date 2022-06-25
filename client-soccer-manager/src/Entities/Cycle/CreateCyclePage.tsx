@@ -8,7 +8,7 @@ import {
 	Button,
 	Container,
 } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAppSelector } from "store";
 
 import List from "@mui/material/List";
@@ -19,6 +19,7 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Checkbox from "@mui/material/Checkbox";
 import { useState } from "react";
 import { Field } from "view/CreateEntity/CreateEntity";
+import { useFirebaseApi } from "firebase-api";
 
 type Team = string[];
 export interface Cycle {
@@ -32,7 +33,7 @@ export interface Cycle {
 		name: string;
 	};
 	players: string[];
-	teams: Team[];
+	teams: any;
 }
 
 const fields = [];
@@ -43,16 +44,24 @@ export const CreateCyclePage = () => {
 	const group = useAppSelector((state) => state.groups.list.find((g) => g.id === params.groupId));
 	const players = useAppSelector((state) => state.players.list);
 
-	const [form, setForm] = useState({
-		teams: [[], [], []],
+	const navigate = useNavigate();
+
+	const firebaseApi = useFirebaseApi();
+
+	const [form, setForm] = useState<any>({
+		numberOfTeams: group?.numberOfTeams,
+		playersPerTeam: group?.playersPerTeam,
+		teams: { team1: [], team2: [], team3: [] },
 	});
 
-	const handleToggle = (value, index) => () => {
+	const { teams } = form;
+
+	const handleToggle = (value: string, index: string) => () => {
 		const team = teams[index];
 
-		const anotherTeams = teams.filter((t, i) => i !== index);
+		const anotherTeams = Object.entries(teams).filter(([name, team]) => name !== index);
 
-		const playerHasTeam = anotherTeams.some((t) => t.includes(value));
+		const playerHasTeam = anotherTeams.some(([name, t]) => t.includes(value));
 
 		if (playerHasTeam) {
 			console.log("player allready has team");
@@ -72,16 +81,23 @@ export const CreateCyclePage = () => {
 
 		setForm({
 			...form,
-			teams: teams.map((t, i) => {
-				if (i === index) return newTeam;
-				return t;
-			}),
+			teams: { ...form.teams, [index]: newTeam },
 		});
 	};
 
 	const [selectedPlayers, setSelectedPlayers] = useState([]);
 
-	const { teams } = form;
+	const createForm = async () => {
+		console.log("====================================");
+		console.log("form", form);
+		console.log("====================================");
+		const res = await firebaseApi.firesotre.createDoc({
+			collectionName: `groups/${group?.id}/cycles`,
+			data: { ...form, createDate: new Date().getTime() },
+		});
+		console.log("res", res);
+		navigate(-1);
+	};
 
 	return (
 		<Container>
@@ -126,10 +142,11 @@ export const CreateCyclePage = () => {
 				<List disablePadding dense sx={{ width: "100%", maxWidth: 300 }} subheader="Teams">
 					{selectedPlayers.map((playerId, i) => {
 						const player = players.find((p) => p.id == playerId);
-						const colors = ["blue", "orange", "green"];
+						const colors = { team1: "blue", team2: "orange", team3: "green" };
 
-						const color = colors[teams.findIndex((t) => t.indexOf(playerId) !== -1)];
+						const team = Object.entries(teams).filter(([name, t]) => t.includes(playerId));
 
+						const color = colors[team[0]];
 						return (
 							<ListItem
 								key={playerId}
@@ -137,19 +154,19 @@ export const CreateCyclePage = () => {
 									<>
 										<Checkbox
 											edge="end"
-											onChange={handleToggle(playerId, 0)}
-											checked={teams[0].indexOf(playerId) !== -1}
+											onChange={handleToggle(playerId, "team1")}
+											checked={teams.team1.indexOf(playerId) !== -1}
 										/>
 										<Checkbox
 											edge="end"
-											onChange={handleToggle(playerId, 1)}
-											checked={teams[1].indexOf(playerId) !== -1}
+											onChange={handleToggle(playerId, "team2")}
+											checked={teams.team2.indexOf(playerId) !== -1}
 											color="secondary"
 										/>
 										<Checkbox
 											edge="end"
-											onChange={handleToggle(playerId, 2)}
-											checked={teams[2].indexOf(playerId) !== -1}
+											onChange={handleToggle(playerId, "team3")}
+											checked={teams.team3.indexOf(playerId) !== -1}
 											color="success"
 										/>
 									</>
@@ -170,7 +187,9 @@ export const CreateCyclePage = () => {
 						);
 					})}
 				</List>
-				<Button variant="contained">Create</Button>
+				<Button onClick={createForm} variant="contained">
+					Create
+				</Button>
 			</Stack>
 		</Container>
 	);

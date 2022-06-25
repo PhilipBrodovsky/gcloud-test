@@ -51,8 +51,15 @@ export function CyclesPage() {
 							<CardHeader
 								avatar={<Avatar sx={{ bgcolor: red[500] }}>R</Avatar>}
 								action={
-									<IconButton>
-										<MoreVertIcon />
+									<IconButton
+										onClick={() => {
+											firebaseApi.firesotre.deleteDocument({
+												collectionName: `groups/${params.groupId}/cycles`,
+												id: cycle.id,
+											});
+										}}
+									>
+										<DeleteIcon />
 									</IconButton>
 								}
 								title={cycle.name}

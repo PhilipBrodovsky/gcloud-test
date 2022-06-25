@@ -127,6 +127,7 @@ export const useFirebaseApi = () => {
 				id: doc.id,
 				...doc.data(),
 			};
+
 			callback({ item });
 		});
 		return unsubscribe;

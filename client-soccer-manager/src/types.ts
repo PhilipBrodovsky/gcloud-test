@@ -12,3 +12,5 @@ export interface Field {
 	defaultValue?: any;
 	type?: "text" | "number" | "file" | "select" | "select-multi";
 }
+
+export type Teams = { [key: string]: string[] };

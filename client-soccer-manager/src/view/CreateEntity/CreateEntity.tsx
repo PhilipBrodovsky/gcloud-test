@@ -18,6 +18,7 @@ interface Field {
 	name?: string;
 	type?: string;
 	label?: string;
+	defaultValue?: any;
 }
 
 export function Field(props: FieldProps) {
@@ -70,7 +71,7 @@ export function Field(props: FieldProps) {
 	}
 
 	console.log(field);
-	
+
 	return (
 		<TextField
 			autoComplete="off"

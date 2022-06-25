@@ -14,13 +14,26 @@ import ShareIcon from "@mui/icons-material/Share";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useActions, useAppSelector } from "store";
-import { Button, CardActionArea, Divider, Stack } from "@mui/material";
+import {
+	Button,
+	CardActionArea,
+	Divider,
+	Stack,
+	List,
+	ListItem,
+	ListItemButton,
+	ListItemIcon,
+	ListItemText,
+} from "@mui/material";
 import { Field } from "view/CreateEntity/CreateEntity";
 import { useEffect, useState } from "react";
 import { useFirebaseApi } from "firebase-api";
 
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { useCycleGames } from "hooks";
+import { AppBarWithDrawer } from "components";
+
+import LoopIcon from "@mui/icons-material/Loop";
 
 type Team = string[];
 
@@ -62,7 +75,6 @@ export const CyclePage = (props: Props) => {
 	const players = useAppSelector((state) => state.players.list);
 	const cycles = useAppSelector((state) => state.cycles.map[params.groupId]);
 	const cycle = cycles?.find((c) => c.id === params.cycleId);
-
 
 	const groupForm = useCycleForm();
 
@@ -127,72 +139,70 @@ export const CyclePage = (props: Props) => {
 	];
 
 	return (
-		<Card sx={{ width: "100%" }}>
-			{/* <CardHeader
-				avatar={<Avatar sx={{ bgcolor: red[500] }}>R</Avatar>}
-				action={
-					<IconButton>
-						<MoreVertIcon />
-					</IconButton>
-				}
-				title={group.name}
-				subheader="September 14, 2016"
-			/> */}
-			{/* <CardMedia component="img" height="194" image={group.image?.url} alt="Paella dish" /> */}
-			<CardContent>
-				<Typography variant="body2" color="text.secondary">
-					games: 10
-				</Typography>
-				<Divider sx={{ my: 2 }} />
-
-				<Stack direction="row" flexWrap="wrap" gap={2} justifyContent="center">
-					{teams.map((team, i) => {
-						return (
-							<Card sx={{ minWidth: 300 }}>
-								<CardHeader title={`Team ${i}`} subheader="wins: 3" />
-								<CardContent>
-									<Stack gap={2}>
-										{team.map((player) => {
-											return (
-												<Stack gap={1} alignItems="center" direction="row">
-													<Avatar>{player}</Avatar>
-													<Typography variant="body2" color="text.secondary">
-														player: {player}
-													</Typography>
-												</Stack>
-											);
-										})}
-									</Stack>
-								</CardContent>
-							</Card>
-						);
-					})}
-				</Stack>
-
-				<Divider sx={{ my: 2 }} />
-				<Stack direction="row" alignItems="center" justifyContent="space-between">
-					<Typography variant="h4">Games</Typography>
-					<Button onClick={randomTeams} variant="contained">
-						Random Teams
-					</Button>
-					<Button onClick={createGame} variant="contained">
-						Create
-					</Button>
-				</Stack>
-				<Stack>
-					{games.map((game) => {
-						return (
-							<Card
+		<AppBarWithDrawer
+			title="Cicle"
+			drawerContent={
+				<List>
+					{["Games"].map((text, index) => (
+						<ListItem key={text} disablePadding>
+							<ListItemButton
 								onClick={() => {
-									navigate(`games/${game.id}`);
+									navigate(text.toLowerCase());
 								}}
 							>
-								<CardContent>{game.name}</CardContent>
-							</Card>
-						);
-					})}
-				</Stack>
-			</CardContent>
-		</Card>
+								<ListItemIcon>
+									<LoopIcon />
+								</ListItemIcon>
+								<ListItemText primary={text} />
+							</ListItemButton>
+						</ListItem>
+					))}
+				</List>
+			}
+		>
+			<Card sx={{ width: "100%" }}>
+				<CardContent>
+					<Typography variant="body2" color="text.secondary">
+						games: 10
+					</Typography>
+					<Divider sx={{ my: 2 }} />
+
+					<Stack direction="row" flexWrap="wrap" gap={2} justifyContent="center">
+						{teams.map((team, i) => {
+							return (
+								<Card sx={{ minWidth: 300 }}>
+									<CardHeader title={`Team ${i}`} subheader="wins: 3" />
+									<CardContent>
+										<Stack gap={2}>
+											{team.map((player) => {
+												return (
+													<Stack gap={1} alignItems="center" direction="row">
+														<Avatar>{player}</Avatar>
+														<Typography variant="body2" color="text.secondary">
+															player: {player}
+														</Typography>
+													</Stack>
+												);
+											})}
+										</Stack>
+									</CardContent>
+								</Card>
+							);
+						})}
+					</Stack>
+
+					<Divider sx={{ my: 2 }} />
+					<Stack direction="row" alignItems="center" justifyContent="space-between">
+						<Typography variant="h4">Games</Typography>
+						<Button onClick={randomTeams} variant="contained">
+							Random Teams
+						</Button>
+						<Button onClick={createGame} variant="contained">
+							Create
+						</Button>
+					</Stack>
+				</CardContent>
+			</Card>
+		</AppBarWithDrawer>
 	);
 };

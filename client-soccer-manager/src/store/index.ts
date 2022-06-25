@@ -1,3 +1,4 @@
+import { Game } from "./../Entities/Game/Game";
 import { Group, Player } from "Entities";
 import { AppDispatch } from "./index";
 import { configureStore, combineReducers, createSlice, PayloadAction } from "@reduxjs/toolkit";
@@ -54,6 +55,9 @@ const cyclesSlice = createSlice({
 	reducers: {
 		set: (state, action: PayloadAction<{ groupId: string; cycles: any[] }>) => {
 			state.map[action.payload.groupId] = action.payload.cycles;
+		},
+		setCycle: (state, action: PayloadAction<{ groupId: string; cycle: Cycle }>) => {
+			state.map[action.payload.groupId] = [action.payload.cycle];
 		},
 	},
 });
