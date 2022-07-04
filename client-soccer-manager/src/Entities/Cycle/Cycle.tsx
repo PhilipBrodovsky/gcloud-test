@@ -23,16 +23,8 @@ import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { useCycleGames } from "hooks";
 import { Teams } from "types";
 
-
 export interface Cycle {
 	id: string;
-	name: string;
-	image?: {
-		url: string;
-		bucket: string;
-		fullPath: string;
-		name: string;
-	};
 	players: string[];
 	teams: Teams;
 }
@@ -48,7 +40,7 @@ export const useCycleForm = () => {
 			label: "Players",
 			type: "select",
 			list: players.map((p) => ({ label: p.name, value: p.id })),
-			emptyValue: [],
+			defaultValue: [],
 			selectProps: { multiple: true },
 		},
 	];

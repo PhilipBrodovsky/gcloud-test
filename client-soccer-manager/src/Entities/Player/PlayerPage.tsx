@@ -11,27 +11,56 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Player } from "./Player";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useFirebaseApi } from "firebase-api";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-interface Props {
-	player: Player;
-}
+export const PlayerPage = () => {
+	const firebaseApi = useFirebaseApi();
+	const navigate = useNavigate();
 
-export const PlayerPage = (props: Props) => {
-	const { player } = props;
+	const [player, setPlayer] = useState(null);
+
+	const params = useParams<{ id: string }>();
+
+	useEffect(() => {
+		if (!params.id) return;
+
+		const unsubscribe = firebaseApi.firesotre.subscribeDoc({
+			collectionName: "players",
+			docId: params.id,
+			callback: (res) => setPlayer(res.item),
+		});
+		return () => unsubscribe();
+	}, [params.id]);
+
+	if (!player) return null;
+
 	return (
-		<Card sx={{ width: "100%" }}>
+		<Card sx={{ width: "100%", margin: 2, boxSizing: "border-box" }}>
 			<CardHeader
-				avatar={<Avatar sx={{ bgcolor: red[500] }}>P</Avatar>}
+				avatar={<Avatar src={player.image?.url} sx={{ bgcolor: "darkblue" }} />}
 				action={
-					<IconButton>
-						<MoreVertIcon />
+					<IconButton
+						onClick={() => {
+							// todo: remove player form groups
+							firebaseApi.firesotre.deleteDocument({
+								collectionName: "players",
+								id: player.id,
+							});
+							player.image && firebaseApi.storage.deleteFile(player.image.fullPath);
+							navigate(`/players`);
+						}}
+					>
+						<DeleteIcon />
 					</IconButton>
 				}
 				title={player.name}
 			/>
 			<CardContent>
 				<CardMedia
-					sx={{ maxWidth: 350, margin: "auto" }}
+					sx={{ maxWidth: 300, margin: "auto" }}
 					component="img"
 					image={player.image?.url}
 					alt="Paella dish"

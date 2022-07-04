@@ -19,6 +19,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { GamesRounded } from "@mui/icons-material";
 import { Field } from "view/CreateEntity/CreateEntity";
 import { Cycle } from "Entities/Cycle";
+import { Game } from "./Game";
 
 export const CreateGame = () => {
 	const { cycleId, groupId } = useParams<{ cycleId: string; groupId: string }>();
@@ -69,7 +70,7 @@ export const CreateGame = () => {
 
 	const createTeam = () => {
 		// cycle
-		const newGame = {
+		const newGame: Game = {
 			teamOne: {
 				name: selectedTeams.teamOne,
 				players: cycle.teams[selectedTeams.teamOne].reduce((acc, id) => {

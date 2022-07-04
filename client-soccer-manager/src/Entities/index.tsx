@@ -1,5 +1,3 @@
-import { EntityList } from "view/EntityList/EntityList";
-import { entityName } from "../utils/entity";
 export * from "./Player";
 export * from "./Group";
 export * from "./Cycle/Cycle";
@@ -38,7 +36,6 @@ class FirestoreModel {
 				}`,
 			};
 		});
-
 	}
 
 	getEntiy(name: string) {
@@ -57,28 +54,3 @@ function loopOnObject(object: Model, parent: Model | null, callback: any) {
 			loopOnObject(child, object, callback);
 		});
 }
-
-export const firestoreModel = new FirestoreModel({
-	entityName: "",
-	children: [
-		{
-			entityName: "groups",
-			ListPage: <EntityList entity="groups" />,
-			children: [
-				{
-					entityName: "cycles",
-
-					children: [
-						{
-							entityName: "games",
-						},
-					],
-				},
-			],
-		},
-		{
-			entityName: "players",
-		},
-	],
-});
-

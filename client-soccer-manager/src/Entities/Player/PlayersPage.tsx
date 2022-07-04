@@ -11,58 +11,24 @@ import { useNavigate } from "react-router-dom";
 import { Fab, Stack } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Player } from "./Player";
+import { PlayerCard } from "./PlayerCard";
 
-export function PlayerCard(props: { player: Player }) {
-	const { player } = props;
-	const firebaseApi = useFirebaseApi();
 
-	const navigate = useNavigate();
-
-	return (
-		<Card sx={{ minWidth: 280, maxWidth: 320, width: "100%", position: "relative" }}>
-			<CardHeader
-				avatar={<Avatar>{parseInt(Math.random() * (99 - 50) + 50)}</Avatar>}
-				action={
-					<IconButton
-						onClick={() => {
-							// todo: remove player form groups
-							firebaseApi.firesotre.deleteDocument({
-								collectionName: "players",
-								id: player.id,
-							});
-							player.image && firebaseApi.storage.deleteFile(player.image.fullPath);
-						}}
-					>
-						<DeleteIcon />
-					</IconButton>
-				}
-				title={player.name || "Player"}
-			/>
-			<CardActionArea
-				onClick={() => {
-					navigate(`/players/${player.id}`);
-				}}
-			>
-				<CardMedia
-					sx={{
-						aspectRatio: "9/10",
-					}}
-					alt=""
-					component="img"
-					src={player.image?.url || "/player.png"}
-				/>
-			</CardActionArea>
-		</Card>
-	);
-}
 
 export function PlayersPage() {
 	const navigate = useNavigate();
 	const players = useAppSelector((state) => state.players.list);
 
 	return (
-		<Stack id="EntityListPage" width="100%">
-			<Stack width="100%" direction="row" gap={2} flexWrap="wrap" justifyContent="center">
+		<Stack
+			sx={{
+				flexGrow: 1,
+				background: `rgba(0, 0, 0, 1)  radial-gradient(ellipse at center,rgba(212, 157, 28, 0.5),rgba(37, 34, 29, 0.3))`,
+			}}
+			id="EntityListPage"
+			width="100%"
+		>
+			<Stack width="100%" direction="row" mt={2} gap={2} flexWrap="wrap" justifyContent="center">
 				{players.map((player) => {
 					return <PlayerCard player={player} key={player.id} />;
 				})}

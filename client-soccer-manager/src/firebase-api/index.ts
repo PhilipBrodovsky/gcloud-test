@@ -123,6 +123,8 @@ export const useFirebaseApi = () => {
 	}) => {
 		const docRef = doc(firestoreDB, collectionName, docId);
 		const unsubscribe = onSnapshot(docRef, (doc) => {
+			if (!doc.exists()) return null;
+
 			const item = {
 				id: doc.id,
 				...doc.data(),

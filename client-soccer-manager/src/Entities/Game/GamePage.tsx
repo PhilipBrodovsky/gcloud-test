@@ -1,12 +1,29 @@
-import { Box, Button, Card, Fab, Stack, Typography } from "@mui/material";
+import {
+	Badge,
+	Box,
+	Button,
+	Card,
+	CardContent,
+	CardHeader,
+	Fab,
+	IconButton,
+	Stack,
+	Typography,
+} from "@mui/material";
 import { AppBarWithDrawer } from "components";
 import { useFirebaseApi } from "firebase-api";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useActions, useAppSelector } from "store";
 import AddIcon from "@mui/icons-material/Add";
 import { Game } from "./Game";
 import { differenceInSeconds } from "date-fns";
+
+import SportsSoccerIcon from "@mui/icons-material/SportsSoccer";
+import HdrAutoIcon from "@mui/icons-material/HdrAuto";
+import PlayCircleFilledIcon from "@mui/icons-material/PlayCircleFilled";
+import StopCircleIcon from "@mui/icons-material/StopCircle";
+import { Player } from "Entities/Player";
 
 export const GamePage = () => {
 	const { cycleId, groupId, gameId } = useParams<{
@@ -14,8 +31,6 @@ export const GamePage = () => {
 		groupId: string;
 		gameId: string;
 	}>();
-
-	const games = useAppSelector((state) => state.games.map[cycleId!]) as Game[];
 
 	const firebaseApi = useFirebaseApi();
 	const actions = useActions();
@@ -25,7 +40,7 @@ export const GamePage = () => {
 	const [game, setGame] = useState<Game | null>(null);
 	const [date, setDate] = useState(Date.now());
 
-	const ref = useRef();
+	const ref = useRef<NodeJS.Timer>();
 
 	useEffect(() => {
 		if (game?.status == "active") {
@@ -47,7 +62,8 @@ export const GamePage = () => {
 	};
 
 	useEffect(() => {
-		firebaseApi.firesotre.subscribeDoc({
+		if (!gameId) return;
+		const unsubscribe = firebaseApi.firesotre.subscribeDoc({
 			collectionName: `groups/${groupId}/cycles/${cycleId}/games`,
 			docId: gameId,
 			callback: (result) => {
@@ -55,10 +71,11 @@ export const GamePage = () => {
 				setGame(result.item);
 			},
 		});
+		return unsubscribe;
 	}, [cycleId]);
 
 	const startGame = () => {
-		if (game?.status === "not-active") {
+		if (game?.status === "not-active" || !game?.status) {
 			firebaseApi.firesotre.updateDocument({
 				collectionName: `groups/${groupId}/cycles/${cycleId}/games`,
 				id: gameId!,
@@ -89,22 +106,18 @@ export const GamePage = () => {
 		});
 	};
 
-	if (!game) return;
-
-	console.table(game.status);
-
-	console.log("====================================");
-	console.log(game.status !== "active" ? "Stop" : "Play");
-	console.log("====================================");
+	if (!game) return null;
 
 	return (
 		<AppBarWithDrawer title="games">
-			<Box
+			<Card
 				sx={{
 					maxWidth: "550px",
 					margin: "auto",
+					width: "100%",
 				}}
 			>
+				<CardHeader title="group header" />
 				<Box>
 					<Typography textAlign="center" variant="h4">
 						{game.teamOne.name} vs {game.teamTwo.name}
@@ -114,61 +127,13 @@ export const GamePage = () => {
 					direction="row"
 					justifyContent="space-between"
 					sx={{
-						border: "4px solid",
 						borderRadius: 4,
-						height: 250,
 						padding: 4,
 					}}
-					gap={4}
+					gap={2}
 				>
-					<Stack
-						sx={{
-							width: "50%",
-						}}
-						gap={2}
-					>
-						<Box
-							sx={{
-								border: "4px solid",
-								borderRadius: 4,
-								height: 100,
-								width: 100,
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "center",
-								fontSize: 40,
-							}}
-						>
-							2
-						</Box>
-						{[1, 2].map((i) => {
-							return <Typography>player name 1</Typography>;
-						})}
-					</Stack>
-					<Stack
-						sx={{
-							width: "50%",
-						}}
-						gap={2}
-					>
-						<Box
-							sx={{
-								border: "4px solid",
-								borderRadius: 4,
-								height: 100,
-								width: 100,
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "center",
-								fontSize: 40,
-							}}
-						>
-							2
-						</Box>
-						{[1, 2].map((i) => {
-							return <Typography>player name 1</Typography>;
-						})}
-					</Stack>
+					<RenderTeam teamNumber="teamOne" game={game} team={game.teamOne} />
+					<RenderTeam teamNumber="teamTwo" game={game} team={game.teamTwo} />
 				</Stack>
 				<Stack my={2} direction={"row"} justifyContent="space-between">
 					<Button
@@ -179,16 +144,92 @@ export const GamePage = () => {
 						{game.status === "active" ? "Stop" : "Play"}
 					</Button>
 					<Typography variant="h5">
-						{displayTimer(differenceInSeconds(new Date(date), new Date(game.gameStartDate)))}
+						{displayTimer(
+							differenceInSeconds(new Date(date), new Date(game.gameStartDate || date))
+						)}
 					</Typography>
 					<Button variant="contained" onClick={endGame} disabled={game.status === "completed"}>
 						end
 					</Button>
 				</Stack>
-			</Box>
+			</Card>
 		</AppBarWithDrawer>
 	);
 };
+
+function RenderTeam(props: {
+	team: { name: string; players: { [key: string]: { goals: number; assists: number } } };
+	game: Game;
+	teamNumber: "teamOne" | "teamTwo";
+}) {
+	const { team, game, teamNumber } = props;
+	const players = useAppSelector((state) => state.players.list);
+
+	const totalGoals = Object.values(team.players).reduce((acc, p) => acc + p.goals, 0);
+
+	const firebaseApi = useFirebaseApi();
+
+	const addGoal = (player: Player) => {
+		firebaseApi.firesotre.updateDocument({
+			collectionName: location.pathname.split("/").slice(0, -1).join("/"),
+			id: game.id,
+			data: {
+				[`${teamNumber}.players.${player.id}.goals`]: firebaseApi.firesotre.increment(1),
+			},
+		});
+	};
+
+	return (
+		<Stack
+			sx={{
+				width: "50%",
+				textAlign: "center",
+				alignItems: "center",
+			}}
+			gap={2}
+		>
+			<Box
+				sx={{
+					border: "4px solid",
+					borderRadius: 4,
+					height: 100,
+					width: 100,
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					fontSize: 40,
+				}}
+			>
+				{totalGoals}
+			</Box>
+			{Object.entries(team.players).map((entry) => {
+				const [playerId, stats] = entry;
+				const player = players.find((p) => p.id === playerId);
+				return (
+					<Stack
+						key={player?.id}
+						component={Card}
+						justifyContent={"space-between"}
+						// direction={"row"}
+						alignItems="center"
+						whiteSpace={"nowrap"}
+						px={1}
+					>
+						<Typography fontSize={12}>{player?.name}</Typography>
+						<Box>
+							<IconButton color="primary">
+								<SportsSoccerIcon onClick={() => addGoal(player)} />
+							</IconButton>
+							<IconButton color="secondary">
+								<HdrAutoIcon />
+							</IconButton>
+						</Box>
+					</Stack>
+				);
+			})}
+		</Stack>
+	);
+}
 
 function displayTimer(time: number) {
 	console.log("====================================");

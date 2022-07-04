@@ -1,2 +1,1 @@
-export * from "./EntityPage";
-export * from "./EntityListPage";
+export * from "./HomePage";

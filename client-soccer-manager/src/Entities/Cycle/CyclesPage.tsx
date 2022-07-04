@@ -14,16 +14,17 @@ import { useEffect } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import CardContent from "@mui/material/CardContent";
 import { red } from "@mui/material/colors";
+import { AppBarWithDrawer } from "components";
 
 export function CyclesPage() {
 	const navigate = useNavigate();
 	const players = useAppSelector((state) => state.players.list);
 
 	const actions = useActions();
-	const params = useParams();
+	const params = useParams<{ groupId: string }>();
 	const firebaseApi = useFirebaseApi();
 
-	const cycles = useAppSelector((state) => state.cycles.map[params.groupId]);
+	const cycles = useAppSelector((state) => state.cycles.map[params.groupId!]);
 
 	useEffect(() => {
 		const unsubscribe = firebaseApi.firesotre.subscribeCollection({
@@ -31,7 +32,7 @@ export function CyclesPage() {
 			callback: (result) => {
 				actions.dispatch(
 					actions.cycles.set({
-						groupId: params.groupId,
+						groupId: params.groupId!,
 						cycles: result.items,
 					})
 				);
@@ -43,52 +44,54 @@ export function CyclesPage() {
 	if (!cycles) return null;
 
 	return (
-		<Stack id="EntityListPage" width="100%">
-			<Stack width="100%" direction="row" gap={2} flexWrap="wrap" justifyContent="center">
-				{cycles?.map((cycle: any) => {
-					return (
-						<Card key={cycle.id}>
-							<CardHeader
-								avatar={<Avatar sx={{ bgcolor: red[500] }}>R</Avatar>}
-								action={
-									<IconButton
-										onClick={() => {
-											firebaseApi.firesotre.deleteDocument({
-												collectionName: `groups/${params.groupId}/cycles`,
-												id: cycle.id,
-											});
-										}}
-									>
-										<DeleteIcon />
-									</IconButton>
-								}
-								title={cycle.name}
-								subheader={new Date(cycle.createDate).toDateString()}
-							/>
-							<CardActionArea
-								onClick={() => {
-									navigate(cycle.id);
-								}}
-							>
-								<CardMedia component="img" image="/soccer.jpeg" height="120" />
-							</CardActionArea>
-							<CardContent>dsas</CardContent>
-						</Card>
-					);
-				})}
+		<AppBarWithDrawer>
+			<Stack id="EntityListPage" width="100%">
+				<Stack width="100%" direction="row" gap={2} flexWrap="wrap" justifyContent="center">
+					{cycles?.map((cycle: any) => {
+						return (
+							<Card key={cycle.id}>
+								<CardHeader
+									avatar={<Avatar sx={{ bgcolor: red[500] }}>R</Avatar>}
+									action={
+										<IconButton
+											onClick={() => {
+												firebaseApi.firesotre.deleteDocument({
+													collectionName: `groups/${params.groupId}/cycles`,
+													id: cycle.id,
+												});
+											}}
+										>
+											<DeleteIcon />
+										</IconButton>
+									}
+									title={cycle.name}
+									subheader={new Date(cycle.createDate).toDateString()}
+								/>
+								<CardActionArea
+									onClick={() => {
+										navigate(cycle.id);
+									}}
+								>
+									<CardMedia component="img" image="/soccer.jpeg" height="120" />
+								</CardActionArea>
+								<CardContent>dsas</CardContent>
+							</Card>
+						);
+					})}
+				</Stack>
+				<Fab
+					onClick={() => navigate(`create`)}
+					color="primary"
+					aria-label="add"
+					sx={{
+						position: "fixed",
+						bottom: 16,
+						right: 16,
+					}}
+				>
+					<AddIcon />
+				</Fab>
 			</Stack>
-			<Fab
-				onClick={() => navigate(`create`)}
-				color="primary"
-				aria-label="add"
-				sx={{
-					position: "fixed",
-					bottom: 16,
-					right: 16,
-				}}
-			>
-				<AddIcon />
-			</Fab>
-		</Stack>
+		</AppBarWithDrawer>
 	);
 }

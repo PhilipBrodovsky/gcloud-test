@@ -10,7 +10,7 @@ export function AppLayout() {
 
 	return (
 		<AppBarWithDrawer
-			title="Home"
+			title="Soccer Manager"
 			drawerContent={
 				<List>
 					{["Groups", "Players"].map((text, index) => (

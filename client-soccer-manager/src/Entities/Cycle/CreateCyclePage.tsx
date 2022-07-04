@@ -88,9 +88,6 @@ export const CreateCyclePage = () => {
 	const [selectedPlayers, setSelectedPlayers] = useState([]);
 
 	const createForm = async () => {
-		console.log("====================================");
-		console.log("form", form);
-		console.log("====================================");
 		const res = await firebaseApi.firesotre.createDoc({
 			collectionName: `groups/${group?.id}/cycles`,
 			data: { ...form, createDate: new Date().getTime() },
@@ -99,9 +96,11 @@ export const CreateCyclePage = () => {
 		navigate(-1);
 	};
 
+	if (!group) return null;
+
 	return (
 		<Container>
-			<Stack width={"100%"} gap={4}>
+			<Stack width={"100%"} p={2} gap={4}>
 				<Field
 					onChange={(name, value) => setForm({ ...form, [name]: value })}
 					value={form.numberOfTeams}
@@ -140,6 +139,27 @@ export const CreateCyclePage = () => {
 					}}
 				/>
 				<List disablePadding dense sx={{ width: "100%", maxWidth: 300 }} subheader="Teams">
+					<ListItem
+						secondaryAction={
+							<>
+								<Checkbox edge="end" checked={true} />
+								<Checkbox edge="end" checked={true} color="secondary" />
+								<Checkbox edge="end" checked={true} color="success" />
+							</>
+						}
+						disablePadding
+					>
+						<ListItemButton>
+							<ListItemAvatar>
+								<Avatar sx={{ width: 30, height: 30 }}>T</Avatar>
+							</ListItemAvatar>
+							<ListItemText
+								// id={playerId}
+
+								primary={`teams`}
+							/>
+						</ListItemButton>
+					</ListItem>
 					{selectedPlayers.map((playerId, i) => {
 						const player = players.find((p) => p.id == playerId);
 						const colors = { team1: "blue", team2: "orange", team3: "green" };

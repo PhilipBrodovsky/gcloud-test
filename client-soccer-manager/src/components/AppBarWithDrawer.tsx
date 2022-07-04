@@ -10,7 +10,7 @@ import { Drawer } from "view/Drawer";
 const drawerWidth = 240;
 
 export function AppBarWithDrawer(props: any) {
-	const { children, title, drawerContent } = props;
+	const { children, title, drawerContent, onBack } = props;
 
 	const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -18,7 +18,7 @@ export function AppBarWithDrawer(props: any) {
 		setMobileOpen(!mobileOpen);
 	};
 	return (
-		<Stack direction="row">
+		<Stack direction="row" flexGrow={1}>
 			<AppBar
 				sx={{
 					ml: { sm: `${drawerWidth}px` },
@@ -35,16 +35,18 @@ export function AppBarWithDrawer(props: any) {
 					>
 						<MenuIcon />
 					</IconButton>
-					<IconButton sx={{ color: "white" }}>
-						<ArrowBackIcon />
-					</IconButton>
+					{onBack && (
+						<IconButton onClick={onBack} sx={{ color: "white" }}>
+							<ArrowBackIcon />
+						</IconButton>
+					)}
 					<Typography variant="h6" noWrap component="div">
 						{title}
 					</Typography>
 				</Toolbar>
 			</AppBar>
 			<Drawer content={drawerContent} open={mobileOpen} onClose={handleDrawerToggle} />
-			<Stack sx={{ width: `calc(100% - 240px)`, flexGrow: 1, p: 2 }}>
+			<Stack sx={{ width: `calc(100% - 240px)`, flexGrow: 1 }}>
 				<Toolbar />
 				{children}
 			</Stack>
