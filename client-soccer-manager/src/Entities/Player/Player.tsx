@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Img } from "types";
 
 export class Player {

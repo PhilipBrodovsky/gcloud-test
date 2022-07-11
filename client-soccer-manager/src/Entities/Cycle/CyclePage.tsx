@@ -71,9 +71,9 @@ export const useCycleForm = () => {
 interface Props {}
 
 export const CyclePage = (props: Props) => {
-	const params = useParams();
+	const params = useParams<{ cycleId: string; groupId: string }>();
 	const players = useAppSelector((state) => state.players.list);
-	const cycles = useAppSelector((state) => state.cycles.map[params.groupId]);
+	const cycles = useAppSelector((state) => state.cycles.map[params.groupId!]);
 	const cycle = cycles?.find((c) => c.id === params.cycleId);
 
 	const groupForm = useCycleForm();
@@ -105,7 +105,7 @@ export const CyclePage = (props: Props) => {
 		}
 
 		const unsubscribe = firebaseApi.firesotre.subscribeCollection({
-			collectionName: `groups/${params.id}/cycles/${cycle.id}/games`,
+			collectionName: `groups/${params.groupId}/cycles/${cycle.id}/games`,
 			callback: (result) => {
 				actions.dispatch(
 					actions.games.set({

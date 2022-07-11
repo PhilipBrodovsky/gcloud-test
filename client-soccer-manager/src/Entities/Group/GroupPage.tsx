@@ -24,6 +24,7 @@ import {
 	ListItemText,
 	Stack,
 	Divider,
+	Button,
 } from "@mui/material";
 import { Field } from "view/CreateEntity/CreateEntity";
 
@@ -134,6 +135,14 @@ export const GroupPage = () => {
 						field={groupForm.fields.find((f) => f.name === "players")}
 						fullWidth
 					/>
+					<Button
+						sx={{ margin: "auto" }}
+						onClick={() => {
+							navigate("cycles");
+						}}
+					>
+						Go to cycles
+					</Button>
 				</CardContent>
 			</Card>
 		</AppBarWithDrawer>

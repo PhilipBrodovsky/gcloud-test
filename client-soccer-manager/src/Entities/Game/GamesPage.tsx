@@ -24,7 +24,7 @@ export const GamesPage = () => {
 		firebaseApi.firesotre.subscribeCollection({
 			collectionName: `groups/${groupId}/cycles/${cycleId}/games`,
 			callback: (result) => {
-				console.log(result);
+				console.log("result", result);
 				actions.dispatch(
 					actions.games.set({
 						cycleId: cycleId!,
@@ -34,6 +34,8 @@ export const GamesPage = () => {
 			},
 		});
 	}, [cycleId]);
+
+	if (!games) return null;
 
 	return (
 		<AppBarWithDrawer title="games">

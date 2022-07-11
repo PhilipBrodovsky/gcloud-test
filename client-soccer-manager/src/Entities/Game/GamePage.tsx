@@ -76,6 +76,7 @@ export const GamePage = () => {
 
 	const startGame = () => {
 		if (game?.status === "not-active" || !game?.status) {
+			setDate(Date.now());
 			firebaseApi.firesotre.updateDocument({
 				collectionName: `groups/${groupId}/cycles/${cycleId}/games`,
 				id: gameId!,
@@ -107,6 +108,14 @@ export const GamePage = () => {
 	};
 
 	if (!game) return null;
+
+	console.log("====================================");
+	console.log(
+		"new Date(date), new Date(game.gameStartDate || date)",
+		new Date(date),
+		new Date(game.gameStartDate || date)
+	);
+	console.log("====================================");
 
 	return (
 		<AppBarWithDrawer title="games">
@@ -175,6 +184,13 @@ function RenderTeam(props: {
 			id: game.id,
 			data: {
 				[`${teamNumber}.players.${player.id}.goals`]: firebaseApi.firesotre.increment(1),
+			},
+		});
+		firebaseApi.firesotre.updateDocument({
+			collectionName: "players",
+			id: player.id,
+			data: {
+				goals: firebaseApi.firesotre.increment(1),
 			},
 		});
 	};

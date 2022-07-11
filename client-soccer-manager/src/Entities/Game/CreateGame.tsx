@@ -68,7 +68,7 @@ export const CreateGame = () => {
 
 	if (!cycle) return null;
 
-	const createTeam = () => {
+	const createTeam = async () => {
 		// cycle
 		const newGame: Game = {
 			teamOne: {
@@ -95,10 +95,11 @@ export const CreateGame = () => {
 		console.log("====================================");
 		console.log("newGame", newGame);
 		console.log("====================================");
-		firebaseApi.firesotre.createDoc({
+		await firebaseApi.firesotre.createDoc({
 			collectionName: `groups/${groupId}/cycles/${cycleId}/games`,
 			data: newGame,
 		});
+		navigate(`/groups/${groupId}/cycles/${cycleId}/games`);
 	};
 	return (
 		<AppBarWithDrawer title="Create Game">
