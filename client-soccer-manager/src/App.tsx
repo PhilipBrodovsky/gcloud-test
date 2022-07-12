@@ -51,11 +51,11 @@ function App() {
 					<Route path="players/create" element={<CreatePlayer />} />
 					<Route path="players/:id" element={<PlayerPage />} />
 					<Route path="groups" element={<GroupsPage />} />
-					<Route path="groups/:groupId/cycles/create" element={<CreateCyclePage />} />
 				</Route>
 				<Route path="groups/create" element={<CreateGroupPage />} />
 				<Route path="groups/:groupId" element={<GroupPage />} />
 				<Route path="groups/:groupId/cycles" element={<CyclesPage />} />
+				<Route path="groups/:groupId/cycles/create" element={<CreateCyclePage />} />
 				<Route path="groups/:groupId/cycles/:cycleId" element={<CyclePage />} />
 				<Route path="groups/:groupId/cycles/:cycleId/games" element={<GamesPage />} />
 				<Route path="groups/:groupId/cycles/:cycleId/games/create" element={<CreateGame />} />
