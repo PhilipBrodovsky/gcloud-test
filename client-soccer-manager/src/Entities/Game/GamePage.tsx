@@ -55,16 +55,6 @@ export const GamePage = () => {
         };
     }, [game?.status]);
 
-    const addGoal = (id: string) => {
-        firebaseApi.firesotre.updateDocument({
-            collectionName: location.pathname.split("/").slice(0, -1).join("/"),
-            id: game.id,
-            data: {
-                [`goals.${id}`]: firebaseApi.firesotre.increment(1),
-            },
-        });
-    };
-
     useEffect(() => {
         if (!gameId) return;
         const unsubscribe = firebaseApi.firesotre.subscribeDoc({
@@ -329,6 +319,8 @@ function RenderTeam(props: {
                 const [playerId, stats] = entry;
                 const player = players.find((p) => p.id === playerId);
 
+                const goalsInGame = player && team.players[player.id]?.goals;
+
                 return (
                     <Stack
                         key={player?.id}
@@ -344,7 +336,7 @@ function RenderTeam(props: {
                             <IconButton color="primary">
                                 <Badge
                                     color="success"
-                                    badgeContent={player?.goals}
+                                    badgeContent={goalsInGame}
                                 >
                                     <SportsSoccerIcon
                                         onClick={() => addGoal(player)}
