@@ -231,6 +231,26 @@ export const CyclePage = (props: Props) => {
         [1, 2, 3, 4, 5],
     ];
 
+    const totalsPlayersIds = [
+        ...cycle.teams.team1,
+        ...cycle.teams.team2,
+        ...cycle.teams.team3,
+    ];
+    console.log("totalsPlayersIds", totalsPlayersIds);
+
+    const stats = games.reduce(
+        (result, game) => {
+            console.log("result", game.winner);
+            if (game.winner) {
+                result[game.winner + "Wins"]++;
+            }
+            return result;
+        },
+        { team1Wins: 0, team2Wins: 0, team3Wins: 0 }
+    );
+
+    console.log("stats", stats);
+
     return (
         <AppBarWithDrawer
             title="Cicle"
@@ -265,6 +285,51 @@ export const CyclePage = (props: Props) => {
         >
             <Card sx={{ width: "100%" }}>
                 <CardContent>
+                    <TableContainer component={Paper}>
+                        <Table sx={{}} aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell></TableCell>
+                                    <TableCell>team1</TableCell>
+                                    <TableCell>team2</TableCell>
+                                    <TableCell>team3</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                <TableRow>
+                                    <TableCell>games</TableCell>
+                                    <TableCell>{totalGamaes1.length}</TableCell>
+                                    <TableCell>{totalGamaes2.length}</TableCell>
+                                    <TableCell>{totalGamaes3.length}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell>goals</TableCell>
+                                    <TableCell>{totalGoals1}</TableCell>
+                                    <TableCell>{totalGoals2}</TableCell>
+                                    <TableCell>{totalGoals3}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell>goal/game</TableCell>
+                                    <TableCell>
+                                        {(
+                                            totalGoals1 / totalGamaes1.length
+                                        ).toFixed(2)}
+                                    </TableCell>
+                                    <TableCell>
+                                        {(
+                                            totalGoals2 / totalGamaes2.length
+                                        ).toFixed(2)}
+                                    </TableCell>
+                                    <TableCell>
+                                        {(
+                                            totalGoals3 / totalGamaes3.length
+                                        ).toFixed(2)}
+                                    </TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    <Divider sx={{ marginBlock: 4 }} />
                     <TableContainer component={Paper}>
                         <Table sx={{}} aria-label="simple table">
                             <TableHead>
