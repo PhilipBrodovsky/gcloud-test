@@ -137,7 +137,17 @@ export const GamePage = () => {
     console.log("====================================");
 
     return (
-        <AppBarWithDrawer title="games">
+        <AppBarWithDrawer
+            onBack={() =>
+                navigate(
+                    window.location.pathname.substring(
+                        0,
+                        window.location.pathname.lastIndexOf("/")
+                    )
+                )
+            }
+            title="games"
+        >
             <Stack alignItems={"center"} gap={2} margin={2}>
                 <Card
                     sx={{
