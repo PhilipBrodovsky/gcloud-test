@@ -114,6 +114,14 @@ export const CyclePage = (props: Props) => {
         (game: Game) =>
             game.teamTwo.name === "team1" || game.teamOne.name === "team1"
     );
+    const totalGamaes3 = games.filter(
+        (game: Game) =>
+            game.teamTwo.name === "team3" || game.teamOne.name === "team3"
+    );
+    const totalGamaes2 = games.filter(
+        (game: Game) =>
+            game.teamTwo.name === "team2" || game.teamOne.name === "team2"
+    );
     const totalGoals1 = totalGamaes1?.reduce((acc, game: Game) => {
         console.log("GG", acc);
         if (game.teamTwo.name === "team1") {
@@ -132,7 +140,7 @@ export const CyclePage = (props: Props) => {
             return acc;
         }
     }, 0);
-    const totalGoals2 = totalGamaes1?.reduce((acc, game: Game) => {
+    const totalGoals2 = totalGamaes2?.reduce((acc, game: Game) => {
         console.log("GG", acc);
         if (game.teamTwo.name === "team2") {
             const goals = Object.values(game.teamTwo.players).reduce(
@@ -150,7 +158,7 @@ export const CyclePage = (props: Props) => {
             return acc;
         }
     }, 0);
-    const totalGoals3 = totalGamaes1?.reduce((acc, game: Game) => {
+    const totalGoals3 = totalGamaes3?.reduce((acc, game: Game) => {
         console.log("GG", acc);
         if (game.teamTwo.name === "team3") {
             const goals = Object.values(game.teamTwo.players).reduce(
@@ -168,15 +176,9 @@ export const CyclePage = (props: Props) => {
             return acc;
         }
     }, 0);
-    const totalGamaes3 = games.filter(
-        (game: Game) =>
-            game.teamTwo.name === "team3" || game.teamOne.name === "team3"
-    );
-    const totalGamaes2 = games.filter(
-        (game: Game) =>
-            game.teamTwo.name === "team2" || game.teamOne.name === "team2"
-    );
+
     console.log("totalGamaes", totalGamaes1, totalGamaes2, totalGamaes3);
+    console.log("total goals", totalGoals1, totalGoals1, totalGoals1);
 
     useEffect(() => {
         if (!cycle?.id) {
@@ -232,6 +234,14 @@ export const CyclePage = (props: Props) => {
     return (
         <AppBarWithDrawer
             title="Cicle"
+            onBack={() =>
+                navigate(
+                    window.location.pathname.substring(
+                        0,
+                        window.location.pathname.lastIndexOf("/")
+                    )
+                )
+            }
             drawerContent={
                 <List>
                     {["Games"].map((text, index) => (

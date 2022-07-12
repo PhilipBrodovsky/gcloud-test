@@ -204,7 +204,10 @@ export const GamePage = () => {
                                     new Date(),
                                     new Date(
                                         game.gameStartDate +
-                                            (game.pauseTotal || 0) || date
+                                            game.pauseTotal +
+                                            (game.pauseStart
+                                                ? Date.now() - game.pauseStart
+                                                : 0 || 0) || date
                                     )
                                 )
                             )}
