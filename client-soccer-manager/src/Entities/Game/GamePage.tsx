@@ -108,14 +108,6 @@ export const GamePage = () => {
         }
     };
 
-    const endGame = () => {
-        firebaseApi.firesotre.updateDocument({
-            collectionName: `groups/${groupId}/cycles/${cycleId}/games`,
-            id: gameId!,
-            data: { status: "completed", gameEndDate: Date.now() },
-        });
-    };
-
     if (!game) return null;
 
     const goals1 = Object.values(game.teamOne.players).reduce(
@@ -126,6 +118,25 @@ export const GamePage = () => {
         (acc, player) => (acc += player.goals),
         0
     );
+
+    const winner =
+        goals1 > goals2
+            ? game.teamOne.name
+            : goals2 > goals1
+            ? game.teamTwo.name
+            : "";
+
+    const endGame = () => {
+        firebaseApi.firesotre.updateDocument({
+            collectionName: `groups/${groupId}/cycles/${cycleId}/games`,
+            id: gameId!,
+            data: {
+                status: "completed",
+                gameEndDate: Date.now(),
+                winner: winner,
+            },
+        });
+    };
 
     console.log("wineer", goals1, goals2);
 

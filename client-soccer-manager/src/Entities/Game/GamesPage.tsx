@@ -1,6 +1,8 @@
 import {
     Badge,
+    Button,
     Card,
+    CardActions,
     CardContent,
     Fab,
     Stack,
@@ -83,8 +85,13 @@ export const GamesPage = () => {
                             ? game.teamTwo
                             : null;
                     return (
-                        <Card onClick={() => navigate(game.id)}>
-                            <CardContent>
+                        <Card
+                            sx={{
+                                background:
+                                    game.status === "active" && "lightgreen",
+                            }}
+                        >
+                            <CardContent onClick={() => navigate(game.id)}>
                                 <Typography textAlign={"end"} variant="caption">
                                     {game.status}
                                 </Typography>
@@ -120,6 +127,10 @@ export const GamesPage = () => {
                                     {goals1} - {goals2}
                                 </Typography>
                             </CardContent>
+                            <CardActions>
+                                <Button>Remove</Button>
+                                <Button>edit</Button>
+                            </CardActions>
                         </Card>
                     );
                 })}
