@@ -128,13 +128,16 @@ export const GamePage = () => {
 
     if (!game) return null;
 
-    console.log("====================================");
-    console.log(
-        "new Date(date), new Date(game.gameStartDate || date)",
-        new Date(date),
-        new Date(game.gameStartDate || date)
+    const goals1 = Object.values(game.teamOne.players).reduce(
+        (acc, player) => (acc += player.goals),
+        0
     );
-    console.log("====================================");
+    const goals2 = Object.values(game.teamTwo.players).reduce(
+        (acc, player) => (acc += player.goals),
+        0
+    );
+
+    console.log("wineer", goals1, goals2);
 
     return (
         <AppBarWithDrawer
@@ -214,6 +217,41 @@ export const GamePage = () => {
                         </Button>
                     </Stack>
                 </Card>
+                {goals1 === goals2 && (
+                    <Stack
+                        direction="row"
+                        alignItems={"center"}
+                        justifyContent={"space-between"}
+                    >
+                        <Typography>Select Winner</Typography>
+                        <Button
+                            onClick={() => {
+                                firebaseApi.firesotre.updateDocument({
+                                    collectionName: `groups/${groupId}/cycles/${cycleId}/games`,
+                                    id: gameId!,
+                                    data: {
+                                        winner: game.teamOne.name,
+                                    },
+                                });
+                            }}
+                        >
+                            {game.teamOne.name}
+                        </Button>
+                        <Button
+                            onClick={() => {
+                                firebaseApi.firesotre.updateDocument({
+                                    collectionName: `groups/${groupId}/cycles/${cycleId}/games`,
+                                    id: gameId!,
+                                    data: {
+                                        winner: game.teamTwo.name,
+                                    },
+                                });
+                            }}
+                        >
+                            {game.teamTwo.name}
+                        </Button>
+                    </Stack>
+                )}
                 <Button
                     onClick={() => {
                         navigate(
