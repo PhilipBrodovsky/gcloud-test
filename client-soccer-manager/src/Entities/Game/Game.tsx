@@ -10,8 +10,10 @@ export interface Game {
 		name: string;
 		players: { [key: string]: { goals: number; assists: number } };
 	};
+	createDate: number;
 	gameStartDate: number;
 	gameEndDate: number;
-	pauses: { start: number; end: number; duration: number }[];
+	pauseStart: number;
+	pauseTotal: number;
 	status: "not-active" | "stopped" | "active" | "completed";
 }

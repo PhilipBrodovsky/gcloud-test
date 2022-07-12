@@ -13,6 +13,8 @@ import {
 	setDoc,
 	updateDoc,
 	increment,
+	orderBy,
+	query,
 } from "firebase/firestore";
 
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
@@ -94,12 +96,16 @@ export const useFirebaseApi = () => {
 	const subscribeCollection = ({
 		collectionName,
 		callback,
+		order,
 	}: {
 		collectionName: string;
 		callback: (result: { items: [] }) => void;
+		order?: any;
 	}) => {
 		const collRef = collection(firestoreDB, collectionName);
-		const unsubscribe = onSnapshot(collRef, (snapshot) => {
+		const q = order ? query(collRef, order) : query(collRef);
+
+		const unsubscribe = onSnapshot(q, (snapshot) => {
 			let result: any[] = [];
 			snapshot.forEach((doc) => {
 				result.push({

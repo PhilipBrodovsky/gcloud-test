@@ -24,6 +24,7 @@ import HdrAutoIcon from "@mui/icons-material/HdrAuto";
 import PlayCircleFilledIcon from "@mui/icons-material/PlayCircleFilled";
 import StopCircleIcon from "@mui/icons-material/StopCircle";
 import { Player } from "Entities/Player";
+import { arrayUnion, increment } from "firebase/firestore";
 
 export const GamePage = () => {
 	const { cycleId, groupId, gameId } = useParams<{
@@ -38,6 +39,9 @@ export const GamePage = () => {
 	const navigate = useNavigate();
 
 	const [game, setGame] = useState<Game | null>(null);
+	console.log("====================================");
+	console.log(game);
+	console.log("====================================");
 	const [date, setDate] = useState(Date.now());
 
 	const ref = useRef<NodeJS.Timer>();
@@ -76,6 +80,7 @@ export const GamePage = () => {
 
 	const startGame = () => {
 		if (game?.status === "not-active" || !game?.status) {
+			// start
 			setDate(Date.now());
 			firebaseApi.firesotre.updateDocument({
 				collectionName: `groups/${groupId}/cycles/${cycleId}/games`,
@@ -84,17 +89,31 @@ export const GamePage = () => {
 			});
 		}
 		if (game?.status === "active") {
+			// pause
 			firebaseApi.firesotre.updateDocument({
 				collectionName: `groups/${groupId}/cycles/${cycleId}/games`,
 				id: gameId!,
-				data: { status: "stopped" },
+				data: { status: "stopped", pauseStart: Date.now() },
 			});
 		}
 		if (game?.status === "stopped") {
+			// resume
+
+			console.log(
+				"Date.now() - game.gameEndDate",
+				Date.now() - game.pauseStart,
+				Date.now(),
+				game.pauseStart
+			);
+
 			firebaseApi.firesotre.updateDocument({
 				collectionName: `groups/${groupId}/cycles/${cycleId}/games`,
 				id: gameId!,
-				data: { status: "active" },
+				data: {
+					status: "active",
+					pauseTotal: increment(Date.now() - game.pauseStart),
+					pauseStart: 0,
+				},
 			});
 		}
 	};
@@ -119,49 +138,65 @@ export const GamePage = () => {
 
 	return (
 		<AppBarWithDrawer title="games">
-			<Card
-				sx={{
-					maxWidth: "550px",
-					margin: "auto",
-					width: "100%",
-				}}
-			>
-				<CardHeader title="group header" />
-				<Box>
-					<Typography textAlign="center" variant="h4">
-						{game.teamOne.name} vs {game.teamTwo.name}
-					</Typography>
-				</Box>
-				<Stack
-					direction="row"
-					justifyContent="space-between"
+			<Stack alignItems={"center"} gap={2} margin={2}>
+				<Card
 					sx={{
-						borderRadius: 4,
-						padding: 4,
+						maxWidth: "550px",
+						margin: "auto",
+						width: "100%",
 					}}
-					gap={2}
 				>
-					<RenderTeam teamNumber="teamOne" game={game} team={game.teamOne} />
-					<RenderTeam teamNumber="teamTwo" game={game} team={game.teamTwo} />
-				</Stack>
-				<Stack my={2} direction={"row"} justifyContent="space-between">
-					<Button
-						variant="contained"
-						onClick={startGame}
-						disabled={game.status === "completed"}
+					<CardHeader title="group header" />
+					<Box>
+						<Typography textAlign="center" variant="h4">
+							{game.teamOne.name} vs {game.teamTwo.name}
+						</Typography>
+					</Box>
+					<Stack
+						direction="row"
+						justifyContent="space-between"
+						sx={{
+							borderRadius: 4,
+							padding: 4,
+						}}
+						gap={2}
 					>
-						{game.status === "active" ? "Stop" : "Play"}
-					</Button>
-					<Typography variant="h5">
-						{displayTimer(
-							differenceInSeconds(new Date(date), new Date(game.gameStartDate || date))
-						)}
-					</Typography>
-					<Button variant="contained" onClick={endGame} disabled={game.status === "completed"}>
-						end
-					</Button>
-				</Stack>
-			</Card>
+						<RenderTeam teamNumber="teamOne" game={game} team={game.teamOne} />
+						<RenderTeam teamNumber="teamTwo" game={game} team={game.teamTwo} />
+					</Stack>
+					<Stack my={2} direction={"row"} justifyContent="space-between">
+						<Button
+							variant="contained"
+							onClick={startGame}
+							disabled={game.status === "completed"}
+						>
+							{game.status === "active" ? "Stop" : "Play"}
+						</Button>
+						<Typography variant="h5">
+							{displayTimer(
+								differenceInSeconds(
+									new Date(),
+									new Date(game.gameStartDate + (game.pauseTotal || 0) || date)
+								)
+							)}
+						</Typography>
+						<Button
+							variant="contained"
+							onClick={endGame}
+							disabled={game.status === "completed"}
+						>
+							end
+						</Button>
+					</Stack>
+				</Card>
+				<Button
+					onClick={() => {
+						navigate(`/groups/${groupId}/cycles/${cycleId}/games/create`);
+					}}
+				>
+					start new game
+				</Button>
+			</Stack>
 		</AppBarWithDrawer>
 	);
 };

@@ -91,10 +91,13 @@ export const CreateGame = () => {
 					return acc;
 				}, {}),
 			},
+			createDate: Date.now(),
+			gameStartDate: 0,
+			gameEndDate: 0,
+			pauseStart: 0,
+			pauseTotal: 0,
+			status: "not-active",
 		};
-		console.log("====================================");
-		console.log("newGame", newGame);
-		console.log("====================================");
 		await firebaseApi.firesotre.createDoc({
 			collectionName: `groups/${groupId}/cycles/${cycleId}/games`,
 			data: newGame,
@@ -103,7 +106,7 @@ export const CreateGame = () => {
 	};
 	return (
 		<AppBarWithDrawer title="Create Game">
-			<Stack direction="row">
+			<Stack direction="row" margin={2} justifyContent="center">
 				<FormControl>
 					<FormLabel id="demo-radio-buttons-group-label">Team 1</FormLabel>
 					<RadioGroup
