@@ -266,29 +266,35 @@ export const CyclePage = (props: Props) => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                <TableRow
-                                    sx={{
-                                        "&:last-child td, &:last-child th": {
-                                            border: 0,
-                                        },
-                                    }}
-                                >
+                                <TableRow>
                                     <TableCell>games</TableCell>
                                     <TableCell>{totalGamaes1.length}</TableCell>
                                     <TableCell>{totalGamaes2.length}</TableCell>
                                     <TableCell>{totalGamaes3.length}</TableCell>
                                 </TableRow>
-                                <TableRow
-                                    sx={{
-                                        "&:last-child td, &:last-child th": {
-                                            border: 0,
-                                        },
-                                    }}
-                                >
+                                <TableRow>
                                     <TableCell>goals</TableCell>
                                     <TableCell>{totalGoals1}</TableCell>
                                     <TableCell>{totalGoals2}</TableCell>
                                     <TableCell>{totalGoals3}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell>goal/game</TableCell>
+                                    <TableCell>
+                                        {(
+                                            totalGoals1 / totalGamaes1.length
+                                        ).toFixed(2)}
+                                    </TableCell>
+                                    <TableCell>
+                                        {(
+                                            totalGoals2 / totalGamaes2.length
+                                        ).toFixed(2)}
+                                    </TableCell>
+                                    <TableCell>
+                                        {(
+                                            totalGoals3 / totalGamaes3.length
+                                        ).toFixed(2)}
+                                    </TableCell>
                                 </TableRow>
                             </TableBody>
                         </Table>
