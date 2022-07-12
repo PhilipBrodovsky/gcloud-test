@@ -306,6 +306,24 @@ function RenderTeam(props: {
         });
     };
 
+    const addAssist = (player: Player) => {
+        firebaseApi.firesotre.updateDocument({
+            collectionName: location.pathname.split("/").slice(0, -1).join("/"),
+            id: game.id,
+            data: {
+                [`${teamNumber}.players.${player.id}.assists`]:
+                    firebaseApi.firesotre.increment(1),
+            },
+        });
+        firebaseApi.firesotre.updateDocument({
+            collectionName: "players",
+            id: player.id,
+            data: {
+                assists: firebaseApi.firesotre.increment(1),
+            },
+        });
+    };
+
     return (
         <Stack
             sx={{
@@ -334,6 +352,8 @@ function RenderTeam(props: {
                 const player = players.find((p) => p.id === playerId);
 
                 const goalsInGame = player && team.players[player.id]?.goals;
+                const assistsInGame =
+                    player && team.players[player.id]?.assists;
 
                 return (
                     <Stack
@@ -357,8 +377,16 @@ function RenderTeam(props: {
                                     />
                                 </Badge>
                             </IconButton>
-                            <IconButton color="secondary">
-                                <HdrAutoIcon />
+                            <IconButton
+                                onClick={() => addAssist(player)}
+                                color="secondary"
+                            >
+                                <Badge
+                                    color="error"
+                                    badgeContent={assistsInGame}
+                                >
+                                    <HdrAutoIcon />
+                                </Badge>
                             </IconButton>
                         </Box>
                     </Stack>
