@@ -17,134 +17,166 @@ import { useEffect, useState } from "react";
 import { Group } from "./Group";
 import { AppBarWithDrawer } from "components";
 import {
-	List,
-	ListItem,
-	ListItemButton,
-	ListItemIcon,
-	ListItemText,
-	Stack,
-	Divider,
-	Button,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    Stack,
+    Divider,
+    Button,
 } from "@mui/material";
 import { Field } from "view/CreateEntity/CreateEntity";
 
 import MailIcon from "@mui/icons-material/Mail";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
-import { useAppSelector } from "store";
+import { useActions, useAppSelector } from "store";
 
 export const useGroupForm = () => {
-	const players = useAppSelector((state) => state.players.list);
+    const players = useAppSelector((state) => state.players.list);
 
-	const fields = [
-		{ name: "name", label: "Name", defaultValue: "" },
-		{ name: "image", label: "Image", type: "file", defaultValue: "" },
-		{ name: "numberOfTeams", label: "Number of teams", type: "number", defaultValue: 0 },
-		{ name: "playersPerTeam", label: "Players per team", type: "number", defaultValue: 0 },
+    const fields = [
+        { name: "name", label: "Name", defaultValue: "" },
+        { name: "image", label: "Image", type: "file", defaultValue: "" },
+        {
+            name: "numberOfTeams",
+            label: "Number of teams",
+            type: "number",
+            defaultValue: 0,
+        },
+        {
+            name: "playersPerTeam",
+            label: "Players per team",
+            type: "number",
+            defaultValue: 0,
+        },
 
-		{
-			name: "players",
-			label: "Players",
-			type: "select",
-			list: players.map((p) => ({ label: p.name, value: p.id })),
-			defaultValue: [],
-			selectProps: { multiple: true },
-		},
-	];
-	return { fields };
+        {
+            name: "players",
+            label: "Players",
+            type: "select",
+            list: players.map((p) => ({ label: p.name, value: p.id })),
+            defaultValue: [],
+            selectProps: { multiple: true },
+        },
+    ];
+    return { fields };
 };
 
 export const GroupPage = () => {
-	const [group, setGroup] = useState<Group | null>(null);
-	const groupForm = useGroupForm();
+    const [group, setGroup] = useState<Group | null>(null);
+    const groupForm = useGroupForm();
 
-	const firebaseApi = useFirebaseApi();
-	const navigate = useNavigate();
+    const firebaseApi = useFirebaseApi();
+    const navigate = useNavigate();
 
-	const params = useParams<{ groupId: string }>();
+    const params = useParams<{ groupId: string }>();
+    const actions = useActions();
 
-	useEffect(() => {
-		if (!params?.groupId) return;
+    useEffect(() => {
+        if (!params?.groupId) return;
 
-		firebaseApi.firesotre.subscribeDoc({
-			collectionName: "groups",
-			docId: params?.groupId,
-			callback: (res) => setGroup(res.item),
-		});
-	}, [params?.groupId]);
+        firebaseApi.firesotre.subscribeDoc({
+            collectionName: "groups",
+            docId: params?.groupId,
+            callback: (res) => setGroup(res.item),
+        });
+    }, [params?.groupId]);
 
-	if (!group) return null;
+    if (!group) return null;
 
-	console.log("group", group);
+    console.log("group", group);
 
-	return (
-		<AppBarWithDrawer
-			title="Group"
-			onBack={() => navigate("/groups")}
-			drawerContent={
-				<List>
-					{["Cycles"].map((text, index) => (
-						<ListItem key={text} disablePadding>
-							<ListItemButton
-								onClick={() => {
-									navigate(text.toLowerCase());
-								}}
-							>
-								<ListItemIcon>
-									{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-								</ListItemIcon>
-								<ListItemText primary={text} />
-							</ListItemButton>
-						</ListItem>
-					))}
-				</List>
-			}
-		>
-			<Card sx={{ p: 2, m: 2 }}>
-				<CardHeader
-					avatar={<Avatar sx={{ bgcolor: red[500] }}>R</Avatar>}
-					action={
-						<IconButton>
-							<MoreVertIcon />
-						</IconButton>
-					}
-					title={group.name}
-					subheader={new Date().toDateString()}
-				/>
-				<CardMedia component="img" height="300px" image={group.image?.url} alt="Paella dish" />
-				<CardContent>
-					<Stack gap={4}>
-						<Field
-							value={group.numberOfTeams}
-							field={{ name: "numberOfTeams", label: "Number of teams", type: "number" }}
-						/>
-						<Field
-							value={group.playersPerTeam}
-							field={{ name: "playersPerTeam", label: "Players per team", type: "number" }}
-						/>
-					</Stack>
-					<Divider sx={{ my: 2 }} />
-					<Field
-						value={group?.players || []}
-						onChange={(_, newPlayers) => {
-							firebaseApi.firesotre.updateDocument({
-								collectionName: "groups",
-								id: group.id,
-								data: { players: newPlayers },
-							});
-						}}
-						field={groupForm.fields.find((f) => f.name === "players")}
-						fullWidth
-					/>
-					<Button
-						sx={{ margin: "auto" }}
-						onClick={() => {
-							navigate("cycles");
-						}}
-					>
-						Go to cycles
-					</Button>
-				</CardContent>
-			</Card>
-		</AppBarWithDrawer>
-	);
+    return (
+        <AppBarWithDrawer
+            title="Group"
+            onBack={() => navigate("/groups")}
+            drawerContent={
+                <List>
+                    {["Cycles"].map((text, index) => (
+                        <ListItem key={text} disablePadding>
+                            <ListItemButton
+                                onClick={() => {
+                                    actions.dispatch(actions.ui.closeSidebar());
+
+                                    navigate(text.toLowerCase());
+                                }}
+                            >
+                                <ListItemIcon>
+                                    {index % 2 === 0 ? (
+                                        <InboxIcon />
+                                    ) : (
+                                        <MailIcon />
+                                    )}
+                                </ListItemIcon>
+                                <ListItemText primary={text} />
+                            </ListItemButton>
+                        </ListItem>
+                    ))}
+                </List>
+            }
+        >
+            <Card sx={{ p: 2, m: 2 }}>
+                <CardHeader
+                    avatar={<Avatar sx={{ bgcolor: red[500] }}>R</Avatar>}
+                    action={
+                        <IconButton>
+                            <MoreVertIcon />
+                        </IconButton>
+                    }
+                    title={group.name}
+                    subheader={new Date().toDateString()}
+                />
+                <CardMedia
+                    component="img"
+                    height="300px"
+                    image={group.image?.url}
+                    alt="Paella dish"
+                />
+                <CardContent>
+                    <Stack gap={4}>
+                        <Field
+                            value={group.numberOfTeams}
+                            field={{
+                                name: "numberOfTeams",
+                                label: "Number of teams",
+                                type: "number",
+                            }}
+                        />
+                        <Field
+                            value={group.playersPerTeam}
+                            field={{
+                                name: "playersPerTeam",
+                                label: "Players per team",
+                                type: "number",
+                            }}
+                        />
+                    </Stack>
+                    <Divider sx={{ my: 2 }} />
+                    <Field
+                        value={group?.players || []}
+                        onChange={(_, newPlayers) => {
+                            firebaseApi.firesotre.updateDocument({
+                                collectionName: "groups",
+                                id: group.id,
+                                data: { players: newPlayers },
+                            });
+                        }}
+                        field={groupForm.fields.find(
+                            (f) => f.name === "players"
+                        )}
+                        fullWidth
+                    />
+                    <Button
+                        sx={{ margin: "auto" }}
+                        onClick={() => {
+                            navigate("cycles");
+                        }}
+                    >
+                        Go to cycles
+                    </Button>
+                </CardContent>
+            </Card>
+        </AppBarWithDrawer>
+    );
 };

@@ -1,85 +1,113 @@
 import { Game } from "./../Entities/Game/Game";
 import { Group, Player } from "Entities";
 import { AppDispatch } from "./index";
-import { configureStore, combineReducers, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {
+    configureStore,
+    combineReducers,
+    createSlice,
+    PayloadAction,
+} from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { useMemo } from "react";
 
 interface CounterState {
-	list: Player[];
+    list: Player[];
 }
 const initialState: CounterState = {
-	list: [],
+    list: [],
 };
 const playersSlice = createSlice({
-	name: "players",
-	initialState,
-	reducers: {
-		set: (state, action: PayloadAction<any>) => {
-			state.list = action.payload;
-		},
-	},
+    name: "players",
+    initialState,
+    reducers: {
+        set: (state, action: PayloadAction<any>) => {
+            state.list = action.payload;
+        },
+    },
+});
+
+const uiSlice = createSlice({
+    name: "ui",
+    initialState: { sidebar: { isOpen: false } },
+    reducers: {
+        openSidebar: (state) => {
+            state.sidebar.isOpen = true;
+        },
+        closeSidebar: (state) => {
+            state.sidebar.isOpen = false;
+        },
+    },
 });
 
 interface Cycle {}
 
 interface GroupState {
-	list: Group[];
-	cycles: { [key: Group["id"]]: Cycle };
+    list: Group[];
+    cycles: { [key: Group["id"]]: Cycle };
 }
 const initialStateGroup: GroupState = {
-	list: [],
-	cycles: {},
+    list: [],
+    cycles: {},
 };
 
 const groupsSlice = createSlice({
-	name: "groups",
-	initialState: initialStateGroup,
-	reducers: {
-		set: (state, action: PayloadAction<any>) => {
-			state.list = action.payload;
-		},
+    name: "groups",
+    initialState: initialStateGroup,
+    reducers: {
+        set: (state, action: PayloadAction<any>) => {
+            state.list = action.payload;
+        },
 
-		setCycle: (state, action: PayloadAction<any>) => {
-			state.list = action.payload;
-		},
-	},
+        setCycle: (state, action: PayloadAction<any>) => {
+            state.list = action.payload;
+        },
+    },
 });
 
 const initialStateCycles: { map: { [key: string]: any } } = {
-	map: {},
+    map: {},
 };
 const cyclesSlice = createSlice({
-	name: "cycles",
-	initialState: initialStateCycles,
-	reducers: {
-		set: (state, action: PayloadAction<{ groupId: string; cycles: any[] }>) => {
-			state.map[action.payload.groupId] = action.payload.cycles;
-		},
-		setCycle: (state, action: PayloadAction<{ groupId: string; cycle: Cycle }>) => {
-			state.map[action.payload.groupId] = [action.payload.cycle];
-		},
-	},
+    name: "cycles",
+    initialState: initialStateCycles,
+    reducers: {
+        set: (
+            state,
+            action: PayloadAction<{ groupId: string; cycles: any[] }>
+        ) => {
+            state.map[action.payload.groupId] = action.payload.cycles;
+        },
+        setCycle: (
+            state,
+            action: PayloadAction<{ groupId: string; cycle: Cycle }>
+        ) => {
+            state.map[action.payload.groupId] = [action.payload.cycle];
+        },
+    },
 });
 
 const gamesSLice = createSlice({
-	name: "games",
-	initialState: initialStateCycles,
-	reducers: {
-		set: (state, action: PayloadAction<{ cycleId: string; games: any[] }>) => {
-			state.map[action.payload.cycleId] = action.payload.games;
-		},
-	},
+    name: "games",
+    initialState: initialStateCycles,
+    reducers: {
+        set: (
+            state,
+            action: PayloadAction<{ cycleId: string; games: any[] }>
+        ) => {
+            state.map[action.payload.cycleId] = action.payload.games;
+        },
+    },
 });
 
 export const store = configureStore({
-	reducer: combineReducers({
-		players: playersSlice.reducer,
-		groups: groupsSlice.reducer,
-		cycles: cyclesSlice.reducer,
-		games: gamesSLice.reducer,
-	}),
-	middleware: [],
+    reducer: combineReducers({
+        players: playersSlice.reducer,
+        groups: groupsSlice.reducer,
+        cycles: cyclesSlice.reducer,
+        games: gamesSLice.reducer,
+        ui: uiSlice.reducer,
+    }),
+    middleware: [],
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
@@ -92,15 +120,16 @@ export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 export const useActions = () => {
-	const dispatch = useAppDispatch();
-	const result = useMemo(() => {
-		return {
-			dispatch,
-			players: playersSlice.actions,
-			groups: groupsSlice.actions,
-			games: gamesSLice.actions,
-			cycles: cyclesSlice.actions,
-		};
-	}, []);
-	return result;
+    const dispatch = useAppDispatch();
+    const result = useMemo(() => {
+        return {
+            dispatch,
+            players: playersSlice.actions,
+            groups: groupsSlice.actions,
+            games: gamesSLice.actions,
+            cycles: cyclesSlice.actions,
+            ui: uiSlice.actions,
+        };
+    }, []);
+    return result;
 };
