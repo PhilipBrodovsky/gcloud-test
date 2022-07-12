@@ -88,7 +88,7 @@ export function CyclesPage() {
                                 >
                                     <CardMedia
                                         component="img"
-                                        image="/public/soccer.jpeg"
+                                        image="/soccer.jpeg"
                                         height="120"
                                     />
                                 </CardActionArea>
