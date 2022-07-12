@@ -35,6 +35,15 @@ import { AppBarWithDrawer } from "components";
 
 import LoopIcon from "@mui/icons-material/Loop";
 
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import { Game } from "Entities";
+
 type Team = string[];
 
 export interface Cycle {
@@ -74,7 +83,7 @@ export const CyclePage = (props: Props) => {
     const params = useParams<{ cycleId: string; groupId: string }>();
     const players = useAppSelector((state) => state.players.list);
     const cycles = useAppSelector((state) => state.cycles.map[params.groupId!]);
-    const cycle = cycles?.find((c) => c.id === params.cycleId);
+    const cycle = cycles?.find((c) => c.id === params.cycleId) as Cycle;
 
     const groupForm = useCycleForm();
 
@@ -86,6 +95,88 @@ export const CyclePage = (props: Props) => {
     const location = useLocation();
 
     const games = useCycleGames(cycle?.id);
+
+    console.log("cycle", cycle);
+    console.log("games", games);
+
+    function createData(
+        name: string,
+        games: string,
+        goals: number,
+        wins: number,
+        penaltyWin: number,
+        loses: number
+    ) {
+        return { name, games, goals, wins, penaltyWin, loses };
+    }
+
+    const totalGamaes1 = games.filter(
+        (game: Game) =>
+            game.teamTwo.name === "team1" || game.teamOne.name === "team1"
+    );
+    const totalGoals1 = totalGamaes1?.reduce((acc, game: Game) => {
+        console.log("GG", acc);
+        if (game.teamTwo.name === "team1") {
+            const goals = Object.values(game.teamTwo.players).reduce(
+                (acc, player) => (acc += player.goals),
+                0
+            );
+            acc += goals;
+            return acc;
+        } else {
+            const goals = Object.values(game.teamOne.players).reduce(
+                (acc, player) => (acc += player.goals),
+                0
+            );
+            acc += goals;
+            return acc;
+        }
+    }, 0);
+    const totalGoals2 = totalGamaes1?.reduce((acc, game: Game) => {
+        console.log("GG", acc);
+        if (game.teamTwo.name === "team2") {
+            const goals = Object.values(game.teamTwo.players).reduce(
+                (acc, player) => (acc += player.goals),
+                0
+            );
+            acc += goals;
+            return acc;
+        } else {
+            const goals = Object.values(game.teamOne.players).reduce(
+                (acc, player) => (acc += player.goals),
+                0
+            );
+            acc += goals;
+            return acc;
+        }
+    }, 0);
+    const totalGoals3 = totalGamaes1?.reduce((acc, game: Game) => {
+        console.log("GG", acc);
+        if (game.teamTwo.name === "team3") {
+            const goals = Object.values(game.teamTwo.players).reduce(
+                (acc, player) => (acc += player.goals),
+                0
+            );
+            acc += goals;
+            return acc;
+        } else {
+            const goals = Object.values(game.teamOne.players).reduce(
+                (acc, player) => (acc += player.goals),
+                0
+            );
+            acc += goals;
+            return acc;
+        }
+    }, 0);
+    const totalGamaes3 = games.filter(
+        (game: Game) =>
+            game.teamTwo.name === "team3" || game.teamOne.name === "team3"
+    );
+    const totalGamaes2 = games.filter(
+        (game: Game) =>
+            game.teamTwo.name === "team2" || game.teamOne.name === "team2"
+    );
+    console.log("totalGamaes", totalGamaes1, totalGamaes2, totalGamaes3);
 
     useEffect(() => {
         if (!cycle?.id) {
@@ -164,66 +255,44 @@ export const CyclePage = (props: Props) => {
         >
             <Card sx={{ width: "100%" }}>
                 <CardContent>
-                    <Typography variant="body2" color="text.secondary">
-                        games: 10
-                    </Typography>
-                    <Divider sx={{ my: 2 }} />
-
-                    <Stack
-                        direction="row"
-                        flexWrap="wrap"
-                        gap={2}
-                        justifyContent="center"
-                    >
-                        {teams.map((team, i) => {
-                            return (
-                                <Card sx={{ minWidth: 300 }}>
-                                    <CardHeader
-                                        title={`Team ${i}`}
-                                        subheader="wins: 3"
-                                    />
-                                    <CardContent>
-                                        <Stack gap={2}>
-                                            {team.map((player) => {
-                                                return (
-                                                    <Stack
-                                                        gap={1}
-                                                        alignItems="center"
-                                                        direction="row"
-                                                    >
-                                                        <Avatar>
-                                                            {player}
-                                                        </Avatar>
-                                                        <Typography
-                                                            variant="body2"
-                                                            color="text.secondary"
-                                                        >
-                                                            player: {player}
-                                                        </Typography>
-                                                    </Stack>
-                                                );
-                                            })}
-                                        </Stack>
-                                    </CardContent>
-                                </Card>
-                            );
-                        })}
-                    </Stack>
-
-                    <Divider sx={{ my: 2 }} />
-                    <Stack
-                        direction="row"
-                        alignItems="center"
-                        justifyContent="space-between"
-                    >
-                        <Typography variant="h4">Games</Typography>
-                        <Button onClick={randomTeams} variant="contained">
-                            Random Teams
-                        </Button>
-                        <Button onClick={createGame} variant="contained">
-                            Create
-                        </Button>
-                    </Stack>
+                    <TableContainer component={Paper}>
+                        <Table sx={{}} aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell></TableCell>
+                                    <TableCell>team1</TableCell>
+                                    <TableCell>team2</TableCell>
+                                    <TableCell>team3</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                <TableRow
+                                    sx={{
+                                        "&:last-child td, &:last-child th": {
+                                            border: 0,
+                                        },
+                                    }}
+                                >
+                                    <TableCell>games</TableCell>
+                                    <TableCell>{totalGamaes1.length}</TableCell>
+                                    <TableCell>{totalGamaes2.length}</TableCell>
+                                    <TableCell>{totalGamaes3.length}</TableCell>
+                                </TableRow>
+                                <TableRow
+                                    sx={{
+                                        "&:last-child td, &:last-child th": {
+                                            border: 0,
+                                        },
+                                    }}
+                                >
+                                    <TableCell>goals</TableCell>
+                                    <TableCell>{totalGoals1}</TableCell>
+                                    <TableCell>{totalGoals2}</TableCell>
+                                    <TableCell>{totalGoals3}</TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
                 </CardContent>
             </Card>
         </AppBarWithDrawer>

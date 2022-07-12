@@ -52,7 +52,17 @@ export const GamesPage = () => {
     if (!games) return null;
 
     return (
-        <AppBarWithDrawer title="games">
+        <AppBarWithDrawer
+            onBack={() =>
+                navigate(
+                    window.location.pathname.substring(
+                        0,
+                        window.location.pathname.lastIndexOf("/")
+                    )
+                )
+            }
+            title="games"
+        >
             <Stack margin={2} sx={{ backgroundColor: "lightgray" }} gap={2}>
                 {games.map((game) => {
                     console.log(game.winner, "WIN");
