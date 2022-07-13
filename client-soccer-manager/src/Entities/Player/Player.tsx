@@ -1,8 +1,9 @@
+import { DocumentSnapshot } from "firebase/firestore";
 import { useState } from "react";
 import { Img } from "types";
 
 export class Player {
-    id: string;
+    readonly id: string;
     name: string;
     image?: Img;
     goals: number;
@@ -16,4 +17,30 @@ export class Player {
         this.assists = player.assists;
         this.games = player.games;
     }
+    addGoal() {}
+    removeGoal() {}
+
+    addAssist() {}
+    removeAssist() {}
+
+    addGame() {}
+    removeGame() {}
 }
+
+export const PlayerConverter = {
+    toFirestore: (player: Player) => {
+        return {
+            name: player.name,
+            image: player.image,
+            goals: player.goals,
+            assists: player.assists,
+            games: player.games,
+        };
+    },
+    fromFirestore: (snapshot: DocumentSnapshot, options: any) => {
+        const data = snapshot.data(options) as Player;
+        return new Player(data);
+    },
+};
+
+export type NewPlayer = Pick<Player, "name" | "image">;
