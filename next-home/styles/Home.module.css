@@ -1,9 +1,19 @@
 .appBar {
-	background-color: rgb(5 25 44);
-	color: white;
-	display: flex;
-  padding: ;
+    background-color: rgb(5 25 44);
+    color: white;
+    display: flex;
+    padding: 16rem;
+    align-items: center;
 }
 
-.appBar h1 {
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 16rem;
+    margin: auto;
+}
+
+.button {
+    margin: auto;
+    padding: 8px 24px;
 }
