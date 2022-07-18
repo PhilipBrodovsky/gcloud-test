@@ -79,6 +79,8 @@ export const CyclePage = (props: Props) => {
 
 	const games = useCycleGames(cycle?.id) as Game[];
 
+	console.log("games", games);
+
 	function statTeam(): TeamStat {
 		return { goals: 0, wins: 0, games: 0 };
 	}

@@ -41,7 +41,6 @@ export const GamePage = () => {
 	const navigate = useNavigate();
 
 	const [game, setGame] = useState<Game | null>(null);
-	const [date, setDate] = useState(Date.now());
 
 	const ref = useRef<NodeJS.Timer>();
 
@@ -69,7 +68,6 @@ export const GamePage = () => {
 	const startGame = () => {
 		if (game?.status === "not-active" || !game?.status) {
 			// start
-			setDate(Date.now());
 			firebaseApi.firesotre.updateDocument({
 				collectionName: `groups/${groupId}/cycles/${cycleId}/games`,
 				id: gameId!,
@@ -113,7 +111,7 @@ export const GamePage = () => {
 			data: {
 				status: "completed",
 				gameEndDate: Date.now(),
-				winner: winner,
+				winner: goals1 > goals2 ? game.teams[0] : goals2 > goals1 ? game.teams[1] : "",
 			},
 		});
 		game.players.forEach((player) => {
@@ -177,7 +175,8 @@ export const GamePage = () => {
 									new Date(
 										game.gameStartDate +
 											game.pauseTotal +
-											(game.pauseStart ? Date.now() - game.pauseStart : 0 || 0) || date
+											(game.pauseStart ? Date.now() - game.pauseStart : 0 || 0) ||
+											new Date()
 									)
 								)
 							)}
