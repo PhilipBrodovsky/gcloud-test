@@ -284,7 +284,7 @@ function RenderTeam(props: { team: string; game: Game }) {
 	};
 
 	const removeGoal = () => {
-		if (!activePlayer.current) return;
+		if (!activePlayer.current || !activePlayer.current.goals) return;
 		firebaseApi.firesotre.updateDocument({
 			collectionName: location.pathname.split("/").slice(0, -1).join("/"),
 			id: game.id,
@@ -306,7 +306,8 @@ function RenderTeam(props: { team: string; game: Game }) {
 	};
 
 	const removeAssist = () => {
-		if (!activePlayer.current) return;
+		if (!activePlayer.current || !activePlayer.current.assists) return;
+
 		firebaseApi.firesotre.updateDocument({
 			collectionName: location.pathname.split("/").slice(0, -1).join("/"),
 			id: game.id,
@@ -411,7 +412,6 @@ function RenderTeam(props: { team: string; game: Game }) {
 								</MenuItem>
 								<MenuItem
 									onClick={() => {
-										
 										removeAssist();
 										handleClose();
 									}}
