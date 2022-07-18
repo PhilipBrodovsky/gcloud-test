@@ -150,8 +150,8 @@ export const GamePage = () => {
 						}}
 						gap={2}
 					>
-						<RenderTeam game={game} team={game.teams[0]} />
-						<RenderTeam game={game} team={game.teams[1]} />
+						<RenderTeam game={game} team={game.teams[0]} endGame={endGame} />
+						<RenderTeam game={game} team={game.teams[1]} endGame={endGame} />
 					</Stack>
 					<Stack my={2} direction={"row"} justifyContent="space-between">
 						<Button
@@ -239,8 +239,8 @@ function getTeamStats(teamId: string, game: Game): { goals: number; assists: num
 	);
 }
 
-function RenderTeam(props: { team: string; game: Game }) {
-	const { team, game } = props;
+function RenderTeam(props: { team: string; game: Game; endGame: () => void }) {
+	const { team, game, endGame } = props;
 	const players = useAppSelector((state) => state.players.list);
 
 	const totalGoals = getTeamStats(team, game).goals;
@@ -263,8 +263,17 @@ function RenderTeam(props: { team: string; game: Game }) {
 		activePlayer.current = null;
 	};
 
+	useEffect(() => {
+		if (totalGoals === 2 && game.status !== "completed") {
+			endGame();
+		}
+	}, [totalGoals]);
+
 	const addGoal = (player: Player | undefined) => {
 		if (!player) return;
+
+		if (totalGoals >= 2) return;
+
 		firebaseApi.firesotre.updateDocument({
 			collectionName: location.pathname.split("/").slice(0, -1).join("/"),
 			id: game.id,
@@ -329,6 +338,7 @@ function RenderTeam(props: { team: string; game: Game }) {
 	};
 
 	const addAssist = (player: Player) => {
+		if (!player) return;
 		firebaseApi.firesotre.updateDocument({
 			collectionName: location.pathname.split("/").slice(0, -1).join("/"),
 			id: game.id,
