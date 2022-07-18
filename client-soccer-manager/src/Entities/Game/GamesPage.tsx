@@ -25,9 +25,6 @@ export const GamesPage = () => {
 
 	const games = useAppSelector((state) => state.games.map[cycleId!]) as Game[];
 
-	console.log("====================================");
-	console.log("games", games);
-	console.log("====================================");
 	const firebaseApi = useFirebaseApi();
 	const actions = useActions();
 
@@ -38,7 +35,6 @@ export const GamesPage = () => {
 			collectionName: `groups/${groupId}/cycles/${cycleId}/games`,
 			order: orderBy("createDate", "desc"),
 			callback: (result) => {
-				console.log("result", result);
 				actions.dispatch(
 					actions.games.set({
 						cycleId: cycleId!,
