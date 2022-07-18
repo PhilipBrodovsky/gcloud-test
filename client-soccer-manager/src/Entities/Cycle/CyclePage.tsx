@@ -34,8 +34,6 @@ import { Game } from "Entities";
 
 import { Cycle } from "./Cycle";
 
-type Team = string[];
-
 export const useCycleForm = () => {
 	const players = useAppSelector((state) => state.players.list);
 	const fields = [
@@ -242,47 +240,72 @@ export const CyclePage = (props: Props) => {
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{cycle.players.map((cyclePlayer) => {
-									const player = players.find((p) => p.id === cyclePlayer.playerId);
-									if (!player) return null;
+								{[...cycle.players]
+									.sort((p1, p2) => {
+										const goals1 =
+											games.reduce((acc, g) => {
+												if (g.teams.includes(p1.teamId)) {
+													acc +=
+														g.players.find((p) => p.playerId === p1.playerId)
+															?.goals ?? 0;
+												}
+												return acc;
+											}, 0) ?? 0;
+										const goals2 =
+											games.reduce((acc, g) => {
+												if (g.teams.includes(p2.teamId)) {
+													acc +=
+														g.players.find((p) => p.playerId === p2.playerId)
+															?.goals ?? 0;
+												}
+												return acc;
+											}, 0) ?? 0;
+										console.log("goals1", goals1);
+										console.log("goals2", goals2);
 
-									return (
-										<TableRow>
-											<TableCell>{player.name}</TableCell>
-											<TableCell>{cyclePlayer.teamId}</TableCell>
-											<TableCell>
-												{games.reduce((acc, g) => {
-													if (g.teams.includes(cyclePlayer.teamId)) {
-														acc +=
-															g.players.find(
-																(p) => p.playerId === cyclePlayer.playerId
-															)?.goals ?? 0;
-													}
-													return acc;
-												}, 0) ?? 0}
-											</TableCell>
-											<TableCell>
-												{games.reduce((acc, g) => {
-													if (g.teams.includes(cyclePlayer.teamId)) {
-														acc +=
-															g.players.find(
-																(p) => p.playerId === cyclePlayer.playerId
-															)?.assists ?? 0;
-													}
-													return acc;
-												}, 0) ?? 0}
-											</TableCell>
-											<TableCell>
-												{games.reduce((acc, g) => {
-													if (g.teams.includes(cyclePlayer.teamId)) {
-														acc++;
-													}
-													return acc;
-												}, 0) ?? 0}
-											</TableCell>
-										</TableRow>
-									);
-								})}
+										return goals2 - goals1;
+									})
+									.map((cyclePlayer) => {
+										const player = players.find((p) => p.id === cyclePlayer.playerId);
+										if (!player) return null;
+
+										return (
+											<TableRow>
+												<TableCell>{player.name}</TableCell>
+												<TableCell>{cyclePlayer.teamId}</TableCell>
+												<TableCell>
+													{games.reduce((acc, g) => {
+														if (g.teams.includes(cyclePlayer.teamId)) {
+															acc +=
+																g.players.find(
+																	(p) => p.playerId === cyclePlayer.playerId
+																)?.goals ?? 0;
+														}
+														return acc;
+													}, 0) ?? 0}
+												</TableCell>
+												<TableCell>
+													{games.reduce((acc, g) => {
+														if (g.teams.includes(cyclePlayer.teamId)) {
+															acc +=
+																g.players.find(
+																	(p) => p.playerId === cyclePlayer.playerId
+																)?.assists ?? 0;
+														}
+														return acc;
+													}, 0) ?? 0}
+												</TableCell>
+												<TableCell>
+													{games.reduce((acc, g) => {
+														if (g.teams.includes(cyclePlayer.teamId)) {
+															acc++;
+														}
+														return acc;
+													}, 0) ?? 0}
+												</TableCell>
+											</TableRow>
+										);
+									})}
 							</TableBody>
 						</Table>
 					</TableContainer>
