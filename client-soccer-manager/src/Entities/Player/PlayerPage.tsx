@@ -10,7 +10,7 @@ import { red } from "@mui/material/colors";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { Player } from "./Player";
+import { calculateRank, Player } from "./Player";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useFirebaseApi } from "firebase-api";
 import { useNavigate, useParams } from "react-router-dom";
@@ -53,7 +53,16 @@ export const PlayerPage = () => {
 					}}
 				>
 					<CardHeader
-						avatar={<Avatar>99</Avatar>}
+						avatar={
+							<Avatar>
+								{calculateRank(
+									player.games ?? 0,
+									player.goals ?? 0,
+									player.assists ?? 0,
+									player.wins ?? 0
+								)}
+							</Avatar>
+						}
 						action={
 							<IconButton
 								onClick={() => {
@@ -83,14 +92,17 @@ export const PlayerPage = () => {
 					/>
 					<CardContent>
 						<Typography variant="body2" color="text.secondary">
+							games: {player.games || 0}
+						</Typography>
+						<Typography variant="body2" color="text.secondary">
+							wins: {player.wins || 0}
+						</Typography>
+						<Typography variant="body2" color="text.secondary">
 							Goals: {player.goals || 0}
 						</Typography>
 
 						<Typography variant="body2" color="text.secondary">
 							Assists: {player.assists || 0}
-						</Typography>
-						<Typography variant="body2" color="text.secondary">
-							games: {player.games || 0}
 						</Typography>
 					</CardContent>
 				</Card>

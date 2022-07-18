@@ -77,8 +77,8 @@ export const PlayerCard = (props: Props) => {
 						<div>
 							<ul>
 								<li>
-									<span>90</span>
-									<span>dri</span>
+									<span>{player.wins ?? 0}</span>
+									<span>wins</span>
 								</li>
 								<li>
 									<span>33</span>

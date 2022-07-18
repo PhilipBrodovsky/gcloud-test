@@ -8,6 +8,7 @@ export class Player {
 	image?: Img;
 	goals: number;
 	assists: number;
+	wins: number;
 	games: number;
 	callback: any;
 
@@ -17,6 +18,7 @@ export class Player {
 		this.goals = player?.goals || 0;
 		this.assists = player?.assists || 0;
 		this.games = player?.games || 0;
+		this.wins = player?.wins || 0;
 
 		this.addGoal = this.addGoal.bind(this);
 	}

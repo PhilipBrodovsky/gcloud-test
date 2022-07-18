@@ -102,7 +102,7 @@ export const GamePage = () => {
 	const goals1 = getTeamStats(game.teams[0], game)?.goals;
 	const goals2 = getTeamStats(game.teams[1], game)?.goals;
 
-	const winner = game.winner || "";
+	const winner = goals1 > goals2 ? game.teams[0] : goals2 > goals1 ? game.teams[1] : "";
 
 	const endGame = () => {
 		firebaseApi.firesotre.updateDocument({
@@ -111,7 +111,7 @@ export const GamePage = () => {
 			data: {
 				status: "completed",
 				gameEndDate: Date.now(),
-				winner: goals1 > goals2 ? game.teams[0] : goals2 > goals1 ? game.teams[1] : "",
+				winner: winner,
 			},
 		});
 		game.players.forEach((player) => {
@@ -120,6 +120,7 @@ export const GamePage = () => {
 				id: player.playerId,
 				data: {
 					games: firebaseApi.firesotre.increment(1),
+					wins: firebaseApi.firesotre.increment(player.teamId === winner ? 1 : 0),
 				},
 			});
 		});
