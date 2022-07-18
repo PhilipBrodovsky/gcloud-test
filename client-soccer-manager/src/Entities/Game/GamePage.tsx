@@ -411,6 +411,7 @@ function RenderTeam(props: { team: string; game: Game }) {
 								</MenuItem>
 								<MenuItem
 									onClick={() => {
+										
 										removeAssist();
 										handleClose();
 									}}
