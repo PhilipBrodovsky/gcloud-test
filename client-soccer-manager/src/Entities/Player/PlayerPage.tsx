@@ -15,13 +15,15 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useFirebaseApi } from "firebase-api";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { AppBarWithDrawer } from "components";
+import { Stack, TextField } from "@mui/material";
+import { UrlUtils } from "utils";
 
 export const PlayerPage = () => {
 	const firebaseApi = useFirebaseApi();
 	const navigate = useNavigate();
 
-	const [player, setPlayer] = useState(null);
-
+	const [player, setPlayer] = useState<Player | null>(null);
 	const params = useParams<{ id: string }>();
 
 	useEffect(() => {
@@ -38,43 +40,61 @@ export const PlayerPage = () => {
 	if (!player) return null;
 
 	return (
-		<Card sx={{ width: "100%", margin: 2, boxSizing: "border-box" }}>
-			<CardHeader
-				avatar={<Avatar src={player.image?.url} sx={{ bgcolor: "darkblue" }} />}
-				action={
-					<IconButton
-						onClick={() => {
-							// todo: remove player form groups
-							firebaseApi.firesotre.deleteDocument({
-								collectionName: "players",
-								id: player.id,
-							});
-							player.image && firebaseApi.storage.deleteFile(player.image.fullPath);
-							navigate(`/players`);
+		<AppBarWithDrawer
+			title={`Player -  ${player.name}`}
+			onBack={() => navigate(UrlUtils.removeLastPath(location.pathname))}
+		>
+			<Stack alignItems={"center"} justifyContent="center" p={2} flexGrow={1}>
+				<Card
+					sx={{
+						width: "100%",
+						maxWidth: 450,
+						boxSizing: "border-box",
+					}}
+				>
+					<CardHeader
+						avatar={<Avatar>98</Avatar>}
+						action={
+							<IconButton
+								onClick={() => {
+									// todo: remove player form groups
+									firebaseApi.firesotre.deleteDocument({
+										collectionName: "players",
+										id: player.id,
+									});
+									player.image && firebaseApi.storage.deleteFile(player.image.fullPath);
+									navigate(`/players`);
+								}}
+							>
+								<DeleteIcon />
+							</IconButton>
+						}
+						title={player.name}
+					/>
+					<CardMedia
+						sx={{
+							height: 350,
+							borderTop: "1px  solid lightgray",
+							borderBottom: "1px  solid lightgray",
 						}}
-					>
-						<DeleteIcon />
-					</IconButton>
-				}
-				title={player.name}
-			/>
-			<CardContent>
-				<CardMedia
-					sx={{ maxWidth: 300, margin: "auto" }}
-					component="img"
-					image={player.image?.url}
-					alt="Paella dish"
-				/>
-				<Typography variant="body2" color="text.secondary">
-					Goals: 10
-				</Typography>
-				<Typography variant="body2" color="text.secondary">
-					Assists: 20
-				</Typography>
-				<Typography variant="body2" color="text.secondary">
-					games: 20
-				</Typography>
-			</CardContent>
-		</Card>
+						component="img"
+						image={player.image?.url}
+						alt="Paella dish"
+					/>
+					<CardContent>
+						<Typography variant="body2" color="text.secondary">
+							Goals: {player.goals || 0}
+						</Typography>
+
+						<Typography variant="body2" color="text.secondary">
+							Assists: {player.assists || 0}
+						</Typography>
+						<Typography variant="body2" color="text.secondary">
+							games: {player.games || 0}
+						</Typography>
+					</CardContent>
+				</Card>
+			</Stack>
+		</AppBarWithDrawer>
 	);
 };

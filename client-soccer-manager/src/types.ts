@@ -13,4 +13,10 @@ export interface Field {
 	type?: "text" | "number" | "file" | "select" | "select-multi";
 }
 
+export interface Team {
+	image?: Img;
+	name: string;
+	players: string[];
+}
+
 export type Teams = { [key: string]: string[] };

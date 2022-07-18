@@ -13,8 +13,11 @@ import {
 	GamesPage,
 	GroupPage,
 	GroupsPage,
+	Player,
 	PlayerPage,
 	PlayersPage,
+	usePlayer,
+	usePlayers,
 } from "Entities";
 import { CyclesPage } from "Entities/Cycle/CyclesPage";
 import { CyclePage } from "Entities/Cycle/CyclePage";
@@ -42,16 +45,17 @@ function App() {
 			});
 		}
 	}, []);
+
 	return (
 		<>
 			<Routes>
 				<Route path="/" element={<AppLayout />}>
 					<Route index element={<HomePage />} />
-					<Route path="players" element={<PlayersPage />} />
-					<Route path="players/create" element={<CreatePlayer />} />
-					<Route path="players/:id" element={<PlayerPage />} />
-					<Route path="groups" element={<GroupsPage />} />
 				</Route>
+				<Route path="groups" element={<GroupsPage />} />
+				<Route path="players/create" element={<CreatePlayer />} />
+				<Route path="players" element={<PlayersPage />} />
+				<Route path="players/:id" element={<PlayerPage />} />
 				<Route path="groups/create" element={<CreateGroupPage />} />
 				<Route path="groups/:groupId" element={<GroupPage />} />
 				<Route path="groups/:groupId/cycles" element={<CyclesPage />} />

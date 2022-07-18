@@ -19,6 +19,8 @@ interface Field {
 	type?: string;
 	label?: string;
 	defaultValue?: any;
+	list?: any;
+	selectProps?: any;
 }
 
 export function Field(props: FieldProps) {
@@ -70,7 +72,6 @@ export function Field(props: FieldProps) {
 		);
 	}
 
-	console.log(field);
 
 	return (
 		<TextField

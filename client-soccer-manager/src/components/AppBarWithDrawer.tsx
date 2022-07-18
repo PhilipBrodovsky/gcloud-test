@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 
 import MenuIcon from "@mui/icons-material/Menu";
 
@@ -10,54 +10,54 @@ import { useActions, useAppSelector } from "store";
 
 const drawerWidth = 240;
 
-export function AppBarWithDrawer(props: any) {
-    const { children, title, drawerContent, onBack } = props;
+interface Props {
+	title?: string;
+	drawerContent?: ReactNode;
+	children?: ReactNode;
+	onBack?: () => void;
+}
+export function AppBarWithDrawer(props: Props) {
+	const { children, title, drawerContent, onBack } = props;
 
-    const sidebar = useAppSelector((state) => state.ui.sidebar);
-    const actions = useActions();
+	const sidebar = useAppSelector((state) => state.ui.sidebar);
+	const actions = useActions();
 
-    const handleDrawerClose = () => {
-        actions.dispatch(actions.ui.closeSidebar());
-    };
-    return (
-        <Stack direction="row" flexGrow={1}>
-            <AppBar
-                sx={{
-                    ml: { sm: `${drawerWidth}px` },
-                    width: { sm: `calc(100% - ${drawerWidth}px)` },
-                }}
-            >
-                <Toolbar>
-                    <IconButton
-                        color="inherit"
-                        aria-label="open drawer"
-                        edge="start"
-                        onClick={() =>
-                            actions.dispatch(actions.ui.openSidebar())
-                        }
-                        sx={{ mr: 2, display: { sm: "none" } }}
-                    >
-                        <MenuIcon />
-                    </IconButton>
-                    {onBack && (
-                        <IconButton onClick={onBack} sx={{ color: "white" }}>
-                            <ArrowBackIcon />
-                        </IconButton>
-                    )}
-                    <Typography variant="h6" noWrap component="div">
-                        {title}
-                    </Typography>
-                </Toolbar>
-            </AppBar>
-            <Drawer
-                content={drawerContent}
-                open={sidebar.isOpen}
-                onClose={handleDrawerClose}
-            />
-            <Stack sx={{ width: `calc(100% - 240px)`, flexGrow: 1 }}>
-                <Toolbar />
-                {children}
-            </Stack>
-        </Stack>
-    );
+	const handleDrawerClose = () => {
+		actions.dispatch(actions.ui.closeSidebar());
+	};
+	return (
+		<Stack direction="row" flexGrow={1}>
+			<AppBar
+				sx={{
+					ml: { sm: `${drawerWidth}px` },
+					width: { sm: `calc(100% - ${drawerWidth}px)` },
+				}}
+			>
+				<Toolbar>
+					<IconButton
+						color="inherit"
+						aria-label="open drawer"
+						edge="start"
+						onClick={() => actions.dispatch(actions.ui.openSidebar())}
+						sx={{ mr: 2, display: { sm: "none" } }}
+					>
+						<MenuIcon />
+					</IconButton>
+					{onBack && (
+						<IconButton onClick={onBack} sx={{ color: "white" }}>
+							<ArrowBackIcon />
+						</IconButton>
+					)}
+					<Typography variant="h6" noWrap component="div">
+						{title}
+					</Typography>
+				</Toolbar>
+			</AppBar>
+			<Drawer content={drawerContent} open={sidebar.isOpen} onClose={handleDrawerClose} />
+			<Stack sx={{ width: `calc(100% - 240px)`, flexGrow: 1 }}>
+				<Toolbar />
+				{children}
+			</Stack>
+		</Stack>
+	);
 }

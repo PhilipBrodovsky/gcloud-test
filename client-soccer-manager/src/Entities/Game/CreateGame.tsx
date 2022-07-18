@@ -18,8 +18,8 @@ import { useActions, useAppSelector } from "store";
 import AddIcon from "@mui/icons-material/Add";
 import { GamesRounded } from "@mui/icons-material";
 import { Field } from "view/CreateEntity/CreateEntity";
-import { Cycle } from "Entities/Cycle";
 import { Game } from "./Game";
+import { Cycle } from "Entities";
 
 export const CreateGame = () => {
 	const { cycleId, groupId } = useParams<{ cycleId: string; groupId: string }>();
@@ -30,27 +30,14 @@ export const CreateGame = () => {
 	const cycles = useAppSelector((state) => state.cycles.map[groupId!]);
 	const cycle: Cycle = cycles?.find((c: Cycle) => c.id === cycleId);
 
+
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		firebaseApi.firesotre.subscribeCollection({
-			collectionName: `groups/${groupId}/cycles/${cycleId}/games`,
-			callback: (result) => {
-				console.log(result);
-				actions.dispatch(
-					actions.games.set({
-						cycleId: cycleId!,
-						games: result.items,
-					})
-				);
-			},
-		});
-
-		firebaseApi.firesotre.subscribeDoc({
+		const unsubscribe = firebaseApi.firesotre.subscribeDoc({
 			collectionName: `groups/${groupId}/cycles`,
 			docId: cycleId!,
 			callback: (result) => {
-				console.log(result);
 				actions.dispatch(
 					actions.cycles.setCycle({
 						cycle: result.item,
@@ -59,38 +46,21 @@ export const CreateGame = () => {
 				);
 			},
 		});
+		return unsubscribe;
 	}, [cycleId]);
 
-	const [selectedTeams, setSelectedTeams] = useState({
-		teamOne: "",
-		teamTwo: "",
-	});
+	const [teamOne, setTeamOne] = useState("");
+	const [teamTwo, setTeamTwo] = useState("");
 
 	if (!cycle) return null;
 
 	const createTeam = async () => {
 		// cycle
-		const newGame: Game = {
-			teamOne: {
-				name: selectedTeams.teamOne,
-				players: cycle.teams[selectedTeams.teamOne].reduce((acc, id) => {
-					acc[id] = {
-						goals: 0,
-						assists: 0,
-					};
-					return acc;
-				}, {}),
-			},
-			teamTwo: {
-				name: selectedTeams.teamTwo,
-				players: cycle.teams[selectedTeams.teamTwo].reduce((acc, id) => {
-					acc[id] = {
-						goals: 0,
-						assists: 0,
-					};
-					return acc;
-				}, {}),
-			},
+		const newGame: Omit<Game, "id"> = {
+			teams: [teamOne, teamTwo],
+			players: cycle.players
+				.filter((p) => p.teamId === teamOne || p.teamId === teamTwo)
+				.map((cp) => ({ ...cp, goals: 0, assists: 0 })),
 			createDate: Date.now(),
 			gameStartDate: 0,
 			gameEndDate: 0,
@@ -113,10 +83,17 @@ export const CreateGame = () => {
 						aria-labelledby="demo-radio-buttons-group-label"
 						defaultValue="female"
 						name="radio-buttons-group"
-						onChange={(_, value) => setSelectedTeams({ ...selectedTeams, teamOne: value })}
+						onChange={(_, value) => setTeamOne(value)}
 					>
-						{Object.entries(cycle.teams).map(([id, team]) => {
-							return <FormControlLabel value={id} control={<Radio />} label={id} />;
+						{["team1", "team2", "team3"].map((id) => {
+							return (
+								<FormControlLabel
+									disabled={teamTwo === id}
+									value={id}
+									control={<Radio />}
+									label={id}
+								/>
+							);
 						})}
 					</RadioGroup>
 				</FormControl>
@@ -126,14 +103,15 @@ export const CreateGame = () => {
 						aria-labelledby="demo-radio-buttons-group-label"
 						defaultValue="female"
 						name="radio-buttons-group"
-						onChange={(_, value) => setSelectedTeams({ ...selectedTeams, teamTwo: value })}
+						onChange={(_, value) => setTeamTwo(value)}
 					>
-						{Object.entries(cycle.teams).map(([id, team]) => {
+						{["team1", "team2", "team3"].map((id) => {
 							return (
 								<FormControlLabel
 									value={id}
 									control={<Radio color="secondary" />}
 									label={id}
+									disabled={teamOne === id}
 								/>
 							);
 						})}

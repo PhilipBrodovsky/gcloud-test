@@ -31,7 +31,6 @@ export function EntityLayout() {
 						<ListItem key={text} disablePadding>
 							<ListItemButton
 								onClick={() => {
-									console.log(text);
 									navigate(location.pathname + "/" + text.toLowerCase());
 								}}
 							>
@@ -52,7 +51,6 @@ export function EntityLayout() {
 						<ListItem key={text} disablePadding>
 							<ListItemButton
 								onClick={() => {
-									console.log(text);
 									navigate("/" + text.toLowerCase());
 								}}
 							>

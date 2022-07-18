@@ -25,16 +25,16 @@ import {
 import { entityName, getEntityData } from "utils/entity";
 
 import { Favorite, Menu, MoreVert } from "@mui/icons-material";
+import { AppBarWithDrawer } from "components";
 
 export function GroupCard(props: { group: Group }) {
 	const { group } = props;
 
 	const navigate = useNavigate();
-	
 
 	const firebaseApi = useFirebaseApi();
 	return (
-		<Card sx={{ maxWidth: 345 }}>
+		<Card sx={{ maxWidth: 345, minWidth: 300 }}>
 			<CardHeader
 				avatar={<Avatar>G</Avatar>}
 				action={
@@ -51,7 +51,6 @@ export function GroupCard(props: { group: Group }) {
 					</IconButton>
 				}
 				title={group.name}
-				subheader={new Date().toDateString()}
 			/>
 			<CardActionArea
 				onClick={() => {
@@ -69,31 +68,39 @@ export function GroupsPage() {
 	const groups = useAppSelector((state) => state.groups.list);
 
 	return (
-		<Stack
-			sx={{
-				flexGrow: 1,
-				background: `rgba(0, 0, 0, 1)  radial-gradient(ellipse at center,rgba(212, 157, 28, 0.5),rgba(37, 34, 29, 0.3))`,
-			}}
-			id="EntityListPage"
-			width="100%"
-		>
-			<Stack width="100%" direction="row" mt={2} gap={2} flexWrap="wrap" justifyContent="center">
-				{groups.map((group) => {
-					return <GroupCard group={group} key={group.id} />;
-				})}
-			</Stack>
-			<Fab
-				onClick={() => navigate(`/groups/create`)}
-				color="primary"
-				aria-label="add"
+		<AppBarWithDrawer title="Groups" onBack={() => navigate("/")}>
+			<Stack
 				sx={{
-					position: "fixed",
-					bottom: 16,
-					right: 16,
+					flexGrow: 1,
 				}}
+				id="EntityListPage"
+				width="100%"
 			>
-				<AddIcon />
-			</Fab>
-		</Stack>
+				<Stack
+					width="100%"
+					direction="row"
+					mt={2}
+					gap={2}
+					flexWrap="wrap"
+					justifyContent="center"
+				>
+					{groups.map((group) => {
+						return <GroupCard group={group} key={group.id} />;
+					})}
+				</Stack>
+				<Fab
+					onClick={() => navigate(`/groups/create`)}
+					color="primary"
+					aria-label="add"
+					sx={{
+						position: "fixed",
+						bottom: 16,
+						right: 16,
+					}}
+				>
+					<AddIcon />
+				</Fab>
+			</Stack>
+		</AppBarWithDrawer>
 	);
 }

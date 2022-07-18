@@ -1,10 +1,12 @@
 import { Button, Card, CardActions, CardMedia, MenuItem, Stack, TextField } from "@mui/material";
+import { AppBarWithDrawer } from "components";
 import { Player, useGroupForm, usePlayerForm } from "Entities";
 import { useFirebaseApi } from "firebase-api";
 import { addDoc, doc } from "firebase/firestore";
 import { FormEvent, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppSelector } from "store";
+import { UrlUtils } from "utils";
 import { entityName } from "utils/entity";
 
 interface FieldProps {
@@ -70,7 +72,6 @@ export function Field(props: FieldProps) {
 		);
 	}
 
-	console.log(field);
 
 	return (
 		<TextField
@@ -96,19 +97,7 @@ export function Field(props: FieldProps) {
 	);
 }
 
-const getEntityData = (entity: string) => {
-	const colName = entity;
-	return {
-		collection: colName,
-		path: "/" + colName,
-	};
-};
-
-interface CreateEntityProps {}
-
 export const CreatePlayer = () => {
-	const players = useAppSelector((state) => state.players.list);
-
 	const playerForm = usePlayerForm();
 
 	const firebaseApi = useFirebaseApi();
@@ -136,20 +125,32 @@ export const CreatePlayer = () => {
 	};
 
 	return (
-		<Stack data-testid="CreateEntity" component={Card} p={2} gap={2} maxWidth={550} width="100%">
-			{playerForm.fields.map((field, index) => {
-				return (
-					<Field
-						value={form[field.name || ""]}
-						onChange={onChange}
-						field={field}
-						key={index}
-					/>
-				);
-			})}
-			<Button onClick={createPlayer} fullWidth variant="contained" size="large">
-				Create
-			</Button>
-		</Stack>
+		<AppBarWithDrawer
+			title="Add Player"
+			onBack={() => navigate(UrlUtils.removeLastPath(location.pathname))}
+		>
+			<Stack
+				data-testid="CreateEntity"
+				component={Card}
+				p={2}
+				gap={2}
+				maxWidth={550}
+				width="100%"
+			>
+				{playerForm.fields.map((field, index) => {
+					return (
+						<Field
+							value={form[field.name || ""]}
+							onChange={onChange}
+							field={field}
+							key={index}
+						/>
+					);
+				})}
+				<Button onClick={createPlayer} fullWidth variant="contained" size="large">
+					Create
+				</Button>
+			</Stack>
+		</AppBarWithDrawer>
 	);
 };

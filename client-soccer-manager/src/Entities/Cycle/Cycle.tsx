@@ -21,14 +21,20 @@ import { useFirebaseApi } from "firebase-api";
 
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { useCycleGames } from "hooks";
-import { Teams } from "types";
+import { Img, Team } from "types";
 
+export interface CyclePlayer {
+	playerId: string;
+	teamId: string;
+}
 export interface Cycle {
 	id: string;
-	players: string[];
-	teams: Teams;
+	image?: Img;
+	createDate: number; // timestampt
+	numberOfTeams: number;
+	playersPerTeam: number;
+	players: CyclePlayer[];
 }
-
 export const useCycleForm = () => {
 	const players = useAppSelector((state) => state.players.list);
 	const fields = [

@@ -31,10 +31,8 @@ export function Dialog(props: any) {
 
 	const [form, setForm] = useState({});
 
-	console.log("form", form);
 
 	const hanldeChange = (event) => {
-		console.log(event.target.value);
 		setForm({ ...form, [event.target.name]: event.target.value });
 	};
 
