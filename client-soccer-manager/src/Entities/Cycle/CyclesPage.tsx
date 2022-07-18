@@ -52,7 +52,6 @@ export function CyclesPage() {
 			<Stack id="EntityListPage" width="100%">
 				<Stack width="100%" direction="row" gap={2} flexWrap="wrap" justifyContent="center">
 					{cycles?.map((cycle: any) => {
-
 						return (
 							<Card key={cycle.id}>
 								<CardHeader
@@ -61,7 +60,7 @@ export function CyclesPage() {
 										<IconButton
 											onClick={() => {
 												firebaseApi.firesotre.deleteDocument({
-													collectionName: `groups/${params.groupId}/cycles/${cycle.id}`,
+													collectionName: `groups/${params.groupId}/cycles`,
 													id: cycle.id,
 												});
 											}}
