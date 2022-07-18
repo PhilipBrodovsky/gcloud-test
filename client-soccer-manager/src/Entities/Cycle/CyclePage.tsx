@@ -91,8 +91,6 @@ export const CyclePage = (props: Props) => {
 
 	const games = useCycleGames(cycle?.id) as Game[];
 
-	console.log("games", games);
-
 	function statTeam(): TeamStat {
 		return { goals: 0, wins: 0, games: 0 };
 	}
@@ -106,8 +104,6 @@ export const CyclePage = (props: Props) => {
 			result[game.teams[1] as "team1" | "team2" | "team3"].games++;
 			result[game.teams[0] as "team1" | "team2" | "team3"].goals = game.players.reduce(
 				(acc, p) => {
-					console.log("acc", acc);
-
 					if (p.teamId === game.teams[0]) {
 						acc += p.goals ?? 0;
 					}
@@ -117,8 +113,6 @@ export const CyclePage = (props: Props) => {
 			);
 			result[game.teams[1] as "team1" | "team2" | "team3"].goals = game.players.reduce(
 				(acc, p) => {
-					console.log("acc1", acc);
-
 					if (p.teamId === game.teams[1]) {
 						acc += p.goals ?? 0;
 					}
@@ -131,72 +125,6 @@ export const CyclePage = (props: Props) => {
 		},
 		{ team1: statTeam(), team2: statTeam(), team3: statTeam() }
 	);
-
-	console.log("stats", stats);
-
-	const totalGamaes1 = games.filter(
-		(game: Game) => game.teams[0] === "team1" || game.teams[1] === "team1"
-	);
-	const totalGamaes3 = games.filter(
-		(game: Game) => game.teams[0] === "team3" || game.teams[1] === "team3"
-	);
-	const totalGamaes2 = games.filter(
-		(game: Game) => game.teams[0] === "team2" || game.teams[1] === "team2"
-	);
-	const totalGoals1 = totalGamaes1?.reduce((acc, game: Game) => {
-		// console.log("GG", acc);
-		// if (game.teams[1] === "team1") {
-		// 	const goals = Object.values(game.teamTwo.players).reduce(
-		// 		(acc, player) => (acc += player.goals),
-		// 		0
-		// 	);
-		// 	acc += goals;
-		// 	return acc;
-		// } else {
-		// 	const goals = Object.values(game.teamOne.players).reduce(
-		// 		(acc, player) => (acc += player.goals),
-		// 		0
-		// 	);
-		// 	acc += goals;
-		// 	return acc;
-		// }
-	}, 0);
-	const totalGoals2 = totalGamaes2?.reduce((acc, game: Game) => {
-		// console.log("GG", acc);
-		// if (game.teams[1] === "team2") {
-		// 	const goals = Object.values(game.teamTwo.players).reduce(
-		// 		(acc, player) => (acc += player.goals),
-		// 		0
-		// 	);
-		// 	acc += goals;
-		// 	return acc;
-		// } else {
-		// 	const goals = Object.values(game.teamOne.players).reduce(
-		// 		(acc, player) => (acc += player.goals),
-		// 		0
-		// 	);
-		// 	acc += goals;
-		// 	return acc;
-		// }
-	}, 0);
-	const totalGoals3 = totalGamaes3?.reduce((acc, game: Game) => {
-		// console.log("GG", acc);
-		// if (game.teamTwo.name === "team3") {
-		// 	const goals = Object.values(game.teamTwo.players).reduce(
-		// 		(acc, player) => (acc += player.goals),
-		// 		0
-		// 	);
-		// 	acc += goals;
-		// 	return acc;
-		// } else {
-		// 	const goals = Object.values(game.teamOne.players).reduce(
-		// 		(acc, player) => (acc += player.goals),
-		// 		0
-		// 	);
-		// 	acc += goals;
-		// 	return acc;
-		// }
-	}, 0);
 
 	useEffect(() => {
 		if (!cycle?.id) {
@@ -334,9 +262,36 @@ export const CyclePage = (props: Props) => {
 										<TableRow>
 											<TableCell>{player.name}</TableCell>
 											<TableCell>{cyclePlayer.teamId}</TableCell>
-											<TableCell>{player.goals}</TableCell>
-											<TableCell>{player.assists}</TableCell>
-											<TableCell>{player.games}</TableCell>
+											<TableCell>
+												{games.reduce((acc, g) => {
+													if (g.teams.includes(cyclePlayer.teamId)) {
+														acc +=
+															g.players.find(
+																(p) => p.playerId === cyclePlayer.playerId
+															)?.goals ?? 0;
+													}
+													return acc;
+												}, 0) ?? 0}
+											</TableCell>
+											<TableCell>
+												{games.reduce((acc, g) => {
+													if (g.teams.includes(cyclePlayer.teamId)) {
+														acc +=
+															g.players.find(
+																(p) => p.playerId === cyclePlayer.playerId
+															)?.assists ?? 0;
+													}
+													return acc;
+												}, 0) ?? 0}
+											</TableCell>
+											<TableCell>
+												{games.reduce((acc, g) => {
+													if (g.teams.includes(cyclePlayer.teamId)) {
+														acc++;
+													}
+													return acc;
+												}, 0) ?? 0}
+											</TableCell>
 										</TableRow>
 									);
 								})}
