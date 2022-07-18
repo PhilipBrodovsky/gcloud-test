@@ -107,7 +107,16 @@ export const GamesPage = () => {
 								</Typography>
 							</CardContent>
 							<CardActions>
-								<Button>Remove</Button>
+								<Button
+									onClick={() => {
+										firebaseApi.firesotre.deleteDocument({
+											collectionName: `groups/${groupId}/cycles/${cycleId}/games`,
+											id: game.id,
+										});
+									}}
+								>
+									Remove
+								</Button>
 								<Button>edit</Button>
 							</CardActions>
 						</Card>
