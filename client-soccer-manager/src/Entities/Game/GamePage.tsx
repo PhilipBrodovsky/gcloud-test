@@ -116,6 +116,15 @@ export const GamePage = () => {
 				winner: winner,
 			},
 		});
+		game.players.forEach((player) => {
+			firebaseApi.firesotre.updateDocument({
+				collectionName: `/players`,
+				id: player.playerId,
+				data: {
+					games: firebaseApi.firesotre.increment(1),
+				},
+			});
+		});
 	};
 
 	return (
@@ -244,6 +253,7 @@ function RenderTeam(props: { team: string; game: Game; endGame: () => void }) {
 	const players = useAppSelector((state) => state.players.list);
 
 	const totalGoals = getTeamStats(team, game).goals;
+	const totalAssists = getTeamStats(team, game).assists;
 
 	const firebaseApi = useFirebaseApi();
 
@@ -339,6 +349,7 @@ function RenderTeam(props: { team: string; game: Game; endGame: () => void }) {
 
 	const addAssist = (player: Player) => {
 		if (!player) return;
+		if (totalAssists >= 2) return;
 		firebaseApi.firesotre.updateDocument({
 			collectionName: location.pathname.split("/").slice(0, -1).join("/"),
 			id: game.id,

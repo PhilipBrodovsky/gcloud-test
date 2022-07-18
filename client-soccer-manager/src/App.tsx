@@ -24,6 +24,21 @@ import { CyclePage } from "Entities/Cycle/CyclePage";
 import { CreateCyclePage } from "Entities/Cycle";
 import { CreatePlayer } from "Entities/Player/CreatePlayer";
 
+function calculateRank(games, goals, assists, wins) {
+	const goalsRank = (goals / games) * 100;
+	const assistsRank = (assists / games) * 100;
+	const winssRank = (wins / games) * 100;
+	console.log("goalsRank", goalsRank);
+	console.log("assistsRank", assistsRank);
+	console.log("winssRank", winssRank);
+
+	return (wins / games) * 100;
+}
+
+console.log("rank", calculateRank(10, 0, 10, 5));
+console.log("rank 1 game 1 win", calculateRank(1, 0, 0, 1));
+console.log("rank 1 game 1 win 1 goal", calculateRank(1, 1, 0, 1));
+
 function App() {
 	const firebaseApi = useFirebaseApi();
 	const actions = useActions();

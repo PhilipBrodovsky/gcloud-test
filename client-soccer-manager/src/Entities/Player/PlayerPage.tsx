@@ -53,7 +53,7 @@ export const PlayerPage = () => {
 					}}
 				>
 					<CardHeader
-						avatar={<Avatar>98</Avatar>}
+						avatar={<Avatar>99</Avatar>}
 						action={
 							<IconButton
 								onClick={() => {
@@ -78,7 +78,7 @@ export const PlayerPage = () => {
 							borderBottom: "1px  solid lightgray",
 						}}
 						component="img"
-						image={player.image?.url}
+						image={player.image?.url || "/player.png"}
 						alt="Paella dish"
 					/>
 					<CardContent>
