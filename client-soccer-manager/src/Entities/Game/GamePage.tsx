@@ -16,7 +16,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useActions, useAppSelector } from "store";
 import AddIcon from "@mui/icons-material/Add";
-import { Game } from "./Game";
+import { Game, GamePlayer } from "./Game";
 import { differenceInSeconds } from "date-fns";
 
 import SportsSoccerIcon from "@mui/icons-material/SportsSoccer";
@@ -25,6 +25,8 @@ import PlayCircleFilledIcon from "@mui/icons-material/PlayCircleFilled";
 import StopCircleIcon from "@mui/icons-material/StopCircle";
 import { Player } from "Entities/Player";
 import { arrayUnion, increment } from "firebase/firestore";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 
 export const GamePage = () => {
 	const { cycleId, groupId, gameId } = useParams<{
@@ -104,7 +106,6 @@ export const GamePage = () => {
 
 	const winner = game.winner || "";
 
-
 	const endGame = () => {
 		firebaseApi.firesotre.updateDocument({
 			collectionName: `groups/${groupId}/cycles/${cycleId}/games`,
@@ -116,7 +117,6 @@ export const GamePage = () => {
 			},
 		});
 	};
-
 
 	return (
 		<AppBarWithDrawer
@@ -247,6 +247,22 @@ function RenderTeam(props: { team: string; game: Game }) {
 
 	const firebaseApi = useFirebaseApi();
 
+	const [anchorEl, setAnchorEl] = useState(null);
+	const open = Boolean(anchorEl);
+
+	const activePlayer = useRef<GamePlayer | null>(null);
+
+	const handleContextMenu = (player: GamePlayer) => (event) => {
+		event.preventDefault();
+		setAnchorEl(event.currentTarget);
+		activePlayer.current = player;
+	};
+
+	const handleClose = () => {
+		setAnchorEl(null);
+		activePlayer.current = null;
+	};
+
 	const addGoal = (player: Player | undefined) => {
 		if (!player) return;
 		firebaseApi.firesotre.updateDocument({
@@ -263,6 +279,50 @@ function RenderTeam(props: { team: string; game: Game }) {
 			id: player.id,
 			data: {
 				goals: firebaseApi.firesotre.increment(1),
+			},
+		});
+	};
+
+	const removeGoal = () => {
+		if (!activePlayer.current) return;
+		firebaseApi.firesotre.updateDocument({
+			collectionName: location.pathname.split("/").slice(0, -1).join("/"),
+			id: game.id,
+			data: {
+				players: game.players.map((p) =>
+					p.playerId === activePlayer.current?.playerId
+						? { ...p, goals: p.goals ? (p.goals ?? 0) - 1 : 0 }
+						: p
+				),
+			},
+		});
+		firebaseApi.firesotre.updateDocument({
+			collectionName: "players",
+			id: activePlayer.current.playerId,
+			data: {
+				goals: firebaseApi.firesotre.increment(-1),
+			},
+		});
+	};
+
+	const removeAssist = () => {
+		if (!activePlayer.current) return;
+		firebaseApi.firesotre.updateDocument({
+			collectionName: location.pathname.split("/").slice(0, -1).join("/"),
+			id: game.id,
+			data: {
+				players: game.players.map((p) =>
+					p.playerId === activePlayer.current?.playerId
+						? { ...p, assists: p.assists ? (p.assists ?? 0) - 1 : 0 }
+						: p
+				),
+			},
+		});
+		firebaseApi.firesotre.updateDocument({
+			collectionName: "players",
+			id: activePlayer.current.playerId,
+			data: {
+				assists: firebaseApi.firesotre.increment(-1),
 			},
 		});
 	};
@@ -327,8 +387,8 @@ function RenderTeam(props: { team: string; game: Game }) {
 							whiteSpace={"nowrap"}
 							px={1}
 						>
-							<Typography fontSize={12}>{player?.name}</Typography>
-							<Box>
+							<Typography fontSize={12}>{player?.name} </Typography>
+							<Box onContextMenu={handleContextMenu(gamePlayer)}>
 								<IconButton color="primary">
 									<Badge color="success" badgeContent={goalsInGame}>
 										<SportsSoccerIcon onClick={() => addGoal(player)} />
@@ -340,6 +400,24 @@ function RenderTeam(props: { team: string; game: Game }) {
 									</Badge>
 								</IconButton>
 							</Box>
+							<Menu open={open} anchorEl={anchorEl} onClose={handleClose}>
+								<MenuItem
+									onClick={() => {
+										removeGoal();
+										handleClose();
+									}}
+								>
+									remove goal
+								</MenuItem>
+								<MenuItem
+									onClick={() => {
+										removeAssist();
+										handleClose();
+									}}
+								>
+									remove assist
+								</MenuItem>
+							</Menu>
 						</Stack>
 					);
 				})}
