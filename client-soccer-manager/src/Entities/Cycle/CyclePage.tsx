@@ -81,6 +81,9 @@ export const CyclePage = (props: Props) => {
 		return { goals: 0, wins: 0, games: 0 };
 	}
 
+	console.log(games);
+	
+
 	const stats = games.reduce<{ team1: TeamStat; team2: TeamStat; team3: TeamStat }>(
 		(result, game) => {
 			if (game.winner) {
@@ -88,7 +91,7 @@ export const CyclePage = (props: Props) => {
 			}
 			result[game.teams[0] as "team1" | "team2" | "team3"].games++;
 			result[game.teams[1] as "team1" | "team2" | "team3"].games++;
-			result[game.teams[0] as "team1" | "team2" | "team3"].goals = game.players.reduce(
+			result[game.teams[0] as "team1" | "team2" | "team3"].goals += game.players.reduce(
 				(acc, p) => {
 					if (p.teamId === game.teams[0]) {
 						acc += p.goals ?? 0;
@@ -97,7 +100,7 @@ export const CyclePage = (props: Props) => {
 				},
 				0
 			);
-			result[game.teams[1] as "team1" | "team2" | "team3"].goals = game.players.reduce(
+			result[game.teams[1] as "team1" | "team2" | "team3"].goals += game.players.reduce(
 				(acc, p) => {
 					if (p.teamId === game.teams[1]) {
 						acc += p.goals ?? 0;
@@ -151,6 +154,8 @@ export const CyclePage = (props: Props) => {
 			data: { name: "new game" },
 		});
 	};
+
+	console.log("states", stats);
 
 	return (
 		<AppBarWithDrawer
