@@ -203,6 +203,21 @@ export const GamePage = () => {
 										winner: game.teams[0],
 									},
 								});
+
+								game.players.forEach((player) => {
+									console.log(player);
+									
+									firebaseApi.firesotre.updateDocument({
+										collectionName: `/players`,
+										id: player.playerId,
+										data: {
+											games: firebaseApi.firesotre.increment(1),
+											wins: firebaseApi.firesotre.increment(
+												player.teamId === game.teams[0] ? 1 : 0
+											),
+										},
+									});
+								});
 							}}
 						>
 							{game.teams[0]}
@@ -215,6 +230,18 @@ export const GamePage = () => {
 									data: {
 										winner: game.teams[1],
 									},
+								});
+								game.players.forEach((player) => {
+									firebaseApi.firesotre.updateDocument({
+										collectionName: `/players`,
+										id: player.playerId,
+										data: {
+											games: firebaseApi.firesotre.increment(1),
+											wins: firebaseApi.firesotre.increment(
+												player.teamId === game.teams[1] ? 1 : 0
+											),
+										},
+									});
 								});
 							}}
 						>
