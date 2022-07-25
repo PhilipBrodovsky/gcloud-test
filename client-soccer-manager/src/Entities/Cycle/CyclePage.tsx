@@ -66,6 +66,9 @@ export const CyclePage = (props: Props) => {
 	const cycles = useAppSelector((state) => state.cycles.map[params.groupId!]);
 	const cycle = cycles?.find((c) => c.id === params.cycleId) as Cycle;
 
+	console.log('cycle',cycle);
+	
+
 	const groupForm = useCycleForm();
 
 	const firebaseApi = useFirebaseApi();
@@ -80,9 +83,6 @@ export const CyclePage = (props: Props) => {
 	function statTeam(): TeamStat {
 		return { goals: 0, wins: 0, games: 0 };
 	}
-
-	console.log(games);
-	
 
 	const stats = games.reduce<{ team1: TeamStat; team2: TeamStat; team3: TeamStat }>(
 		(result, game) => {
@@ -154,8 +154,6 @@ export const CyclePage = (props: Props) => {
 			data: { name: "new game" },
 		});
 	};
-
-	console.log("states", stats);
 
 	return (
 		<AppBarWithDrawer
@@ -265,8 +263,6 @@ export const CyclePage = (props: Props) => {
 												}
 												return acc;
 											}, 0) ?? 0;
-										console.log("goals1", goals1);
-										console.log("goals2", goals2);
 
 										return goals2 - goals1;
 									})

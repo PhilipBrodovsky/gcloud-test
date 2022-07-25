@@ -68,20 +68,8 @@ export const PlayerConverter = {
 
 export function calculateRank(games: number, goals: number, assists: number, wins: number) {
 	if (games === 0) return 0;
-	const goalsAverage = (goals / (games * 2)) * 100;
-	const assistsAverage = ((assists / (games * 2)) * 100) / 2;
-	const winssRank = (wins / games) * 100;
-	const losePercent = 100 - winssRank;
-	const goalsResult = losePercent > 0 ? goalsAverage / losePercent : 0;
-	const assistsResult = losePercent > 0 ? assistsAverage / losePercent : 0;
-	const totalRank = winssRank + goalsResult + assistsResult;
-	console.log("-------------------------");
-	console.log("winsRank", winssRank);
-	console.log("assistsAverage", assistsAverage);
-	console.log("goalsAverage", goalsAverage);
-	console.log("totalRank", totalRank);
 
-	return Math.min(totalRank, 100).toFixed();
+	return Math.min(((wins + goals / 2 + assists / 4) / games) * 100, 100).toFixed();
 }
 
 export type NewPlayer = Pick<Player, "name" | "image">;

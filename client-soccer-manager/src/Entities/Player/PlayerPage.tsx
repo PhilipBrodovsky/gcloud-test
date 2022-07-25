@@ -16,8 +16,9 @@ import { useFirebaseApi } from "firebase-api";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { AppBarWithDrawer } from "components";
-import { Stack, TextField } from "@mui/material";
+import { Button, Stack, TextField } from "@mui/material";
 import { UrlUtils } from "utils";
+import { FileUpload } from "components/FileUpload";
 
 export const PlayerPage = () => {
 	const firebaseApi = useFirebaseApi();
@@ -50,6 +51,7 @@ export const PlayerPage = () => {
 						width: "100%",
 						maxWidth: 450,
 						boxSizing: "border-box",
+						position: "relative",
 					}}
 				>
 					<CardHeader
@@ -80,6 +82,25 @@ export const PlayerPage = () => {
 						}
 						title={player.name}
 					/>
+					<FileUpload
+						onChange={async (name, file) => {
+							console.log("file", file);
+							const image =
+								file &&
+								(await firebaseApi.storage.uploadFile(file, `players/${player.id}`));
+							console.log(image);
+							
+							file &&
+								(await firebaseApi.firesotre.updateDocument({
+									collectionName: "players",
+									id: player.id,
+									data: { image: image?.data || null },
+								}));
+						}}
+						sx={{ position: "absolute", top: 86, right: 16 }}
+					>
+						Change Photo
+					</FileUpload>
 					<CardMedia
 						sx={{
 							height: 350,

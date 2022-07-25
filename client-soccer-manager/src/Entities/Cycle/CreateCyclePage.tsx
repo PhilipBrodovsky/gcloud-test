@@ -17,7 +17,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Checkbox from "@mui/material/Checkbox";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Field } from "view/CreateEntity/CreateEntity";
 import { useFirebaseApi } from "firebase-api";
 import { AppBarWithDrawer } from "components";
@@ -40,13 +40,36 @@ export const CreateCyclePage = () => {
 
 	const firebaseApi = useFirebaseApi();
 
-
 	const [form, setForm] = useState<Omit<Cycle, "id">>({
 		numberOfTeams: group?.numberOfTeams,
 		playersPerTeam: group?.playersPerTeam,
 		players: [],
 		createDate: 0,
+		teams: {},
 	});
+	console.log(group);
+	console.log(form);
+
+	useEffect(() => {
+		setForm({
+			...form,
+			numberOfTeams: group?.numberOfTeams,
+			playersPerTeam: group?.playersPerTeam,
+		});
+	}, [group]);
+
+	useEffect(() => {
+		const teams = new Array(Number(form.numberOfTeams || 0)).fill(0).reduce((acc, _, i) => {
+			acc["team" + (i + 1)] = { color: "", id: "team" + (i + 1) };
+			return acc;
+		}, {});
+		setForm({
+			...form,
+			teams,
+		});
+	}, [form.numberOfTeams]);
+
+	console.log("teams", form.teams);
 
 	const handleToggle =
 		(playerId: string, teamId: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,7 +94,6 @@ export const CreateCyclePage = () => {
 	};
 
 	if (!group) return null;
-
 
 	return (
 		<AppBarWithDrawer title="Create Cycle">
@@ -120,12 +142,37 @@ export const CreateCyclePage = () => {
 							selectProps: { multiple: true },
 						}}
 					/>
+					<Stack gap={1}>
+						{Object.values(form.teams || {}).map((team) => {
+							console.log(team, "team");
+
+							return (
+								<Stack alignItems={"center"} direction="row" gap={2}>
+									<Typography>{team.id}</Typography>
+									<input
+										onChange={(event) => {
+											console.log(team.id, event.target.value);
+											const newTeams = {
+												...form.teams,
+												[team.id]: { id: team.id, color: event.target.value },
+											};
+											setForm({ ...form, teams: newTeams });
+										}}
+										type="color"
+										id="body"
+										name="body"
+										value={team.color}
+									/>
+								</Stack>
+							);
+						})}
+					</Stack>
 					<List disablePadding dense sx={{ width: "100%", maxWidth: 300 }} subheader="Teams">
 						<ListItem
 							secondaryAction={
 								<>
 									<Checkbox edge="end" checked={true} />
-									<Checkbox edge="end" checked={true} color="secondary" />
+									<Checkbox edge="end" checked={true} sx={{ color: "black" }} />
 									<Checkbox edge="end" checked={true} color="success" />
 								</>
 							}

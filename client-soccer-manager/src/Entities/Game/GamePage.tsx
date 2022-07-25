@@ -5,6 +5,9 @@ import {
 	Card,
 	CardContent,
 	CardHeader,
+	CardMedia,
+	Chip,
+	Divider,
 	Fab,
 	IconButton,
 	Stack,
@@ -40,6 +43,8 @@ export const GamePage = () => {
 
 	const navigate = useNavigate();
 
+	const [date, setDate] = useState(Date.now());
+
 	const [game, setGame] = useState<Game | null>(null);
 
 	const ref = useRef<NodeJS.Timer>();
@@ -73,6 +78,7 @@ export const GamePage = () => {
 				id: gameId!,
 				data: { gameStartDate: Date.now(), status: "active" },
 			});
+			setDate(Date.now());
 		}
 		if (game?.status === "active") {
 			// pause
@@ -94,6 +100,7 @@ export const GamePage = () => {
 					pauseStart: 0,
 				},
 			});
+			setDate(Date.now());
 		}
 	};
 
@@ -114,6 +121,7 @@ export const GamePage = () => {
 				winner: winner,
 			},
 		});
+		if (!winner) return;
 		game.players.forEach((player) => {
 			firebaseApi.firesotre.updateDocument({
 				collectionName: `/players`,
@@ -126,6 +134,29 @@ export const GamePage = () => {
 		});
 	};
 
+	console.log(game);
+	
+
+	type color =
+		| "success"
+		| "primary"
+		| "default"
+		| "secondary"
+		| "error"
+		| "info"
+		| "warning"
+		| undefined;
+
+	function GameStatus() {
+		const color: { [key: string]: color } = {
+			completed: "success",
+			"not-active": "primary",
+			active: "primary",
+			stopped: "primary",
+		};
+		return <Chip label={game?.status} color={color[game?.status || "not-active"]} />;
+	}
+
 	return (
 		<AppBarWithDrawer
 			onBack={() =>
@@ -135,7 +166,7 @@ export const GamePage = () => {
 			}
 			title="games"
 		>
-			<Stack alignItems={"center"} gap={2} margin={2}>
+			<Stack m={2} alignItems={"center"} gap={2}>
 				<Card
 					sx={{
 						maxWidth: "550px",
@@ -143,7 +174,21 @@ export const GamePage = () => {
 						width: "100%",
 					}}
 				>
-					<CardHeader title="group header" />
+					<CardHeader
+						disableTypography
+						title={
+							<Stack gap={1} justifyContent="space-between" direction={"row"}>
+								<GameStatus />
+								<Typography>English PL</Typography>
+							</Stack>
+						}
+						subheader={
+							<Stack>
+								<Typography>{new Date().toLocaleDateString()}</Typography>
+							</Stack>
+						}
+					/>
+					<Divider />
 					<Box>
 						<Typography textAlign="center" variant="h4">
 							{game.teams[0]} vs {game.teams[1]}
@@ -154,7 +199,6 @@ export const GamePage = () => {
 						justifyContent="space-between"
 						sx={{
 							borderRadius: 4,
-							padding: 4,
 						}}
 						gap={2}
 					>
@@ -172,7 +216,7 @@ export const GamePage = () => {
 						<Typography variant="h5">
 							{displayTimer(
 								differenceInSeconds(
-									new Date(),
+									game.status === "active" ? date : new Date(),
 									new Date(
 										game.gameStartDate +
 											game.pauseTotal +
@@ -205,8 +249,6 @@ export const GamePage = () => {
 								});
 
 								game.players.forEach((player) => {
-									console.log(player);
-									
 									firebaseApi.firesotre.updateDocument({
 										collectionName: `/players`,
 										id: player.playerId,
@@ -400,7 +442,7 @@ function RenderTeam(props: { team: string; game: Game; endGame: () => void }) {
 			sx={{
 				width: "50%",
 				textAlign: "center",
-				alignItems: "center",
+				alignItems: "stretch",
 			}}
 			gap={2}
 		>
@@ -414,6 +456,7 @@ function RenderTeam(props: { team: string; game: Game; endGame: () => void }) {
 					alignItems: "center",
 					justifyContent: "center",
 					fontSize: 40,
+					margin: "auto",
 				}}
 			>
 				{totalGoals}
@@ -430,13 +473,13 @@ function RenderTeam(props: { team: string; game: Game; endGame: () => void }) {
 						<Stack
 							key={player?.id}
 							component={Card}
-							justifyContent={"space-between"}
-							// direction={"row"}
-							alignItems="center"
 							whiteSpace={"nowrap"}
 							px={1}
+							alignItems="center"
 						>
-							<Typography fontSize={12}>{player?.name} </Typography>
+							<Stack direction={"row"} alignItems="center" justifyContent={"space-between"}>
+								<Typography fontSize={12}>{player?.name} </Typography>
+							</Stack>
 							<Box onContextMenu={handleContextMenu(gamePlayer)}>
 								<IconButton color="primary">
 									<Badge color="success" badgeContent={goalsInGame}>

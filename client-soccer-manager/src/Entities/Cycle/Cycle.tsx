@@ -34,6 +34,7 @@ export interface Cycle {
 	numberOfTeams: number;
 	playersPerTeam: number;
 	players: CyclePlayer[];
+	teams?: { [key: string]: { color: string; id: string } };
 }
 export const useCycleForm = () => {
 	const players = useAppSelector((state) => state.players.list);
