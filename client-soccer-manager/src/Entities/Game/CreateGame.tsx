@@ -2,6 +2,7 @@ import {
 	Button,
 	Card,
 	Checkbox,
+	Divider,
 	Fab,
 	FormControl,
 	FormControlLabel,
@@ -9,6 +10,7 @@ import {
 	Radio,
 	RadioGroup,
 	Stack,
+	Typography,
 } from "@mui/material";
 import { AppBarWithDrawer } from "components";
 import { useFirebaseApi } from "firebase-api";
@@ -29,7 +31,6 @@ export const CreateGame = () => {
 
 	const cycles = useAppSelector((state) => state.cycles.map[groupId!]);
 	const cycle: Cycle = cycles?.find((c: Cycle) => c.id === cycleId);
-
 
 	const navigate = useNavigate();
 
@@ -74,49 +75,89 @@ export const CreateGame = () => {
 		});
 		navigate(`/groups/${groupId}/cycles/${cycleId}/games`);
 	};
+
+	function RenderTeams({ onChange, value, disabled }) {
+		return (
+			<Stack gap={2}>
+				{["team1", "team2", "team3"].map((id) => {
+					return (
+						<Button
+							key={id}
+							color="primary"
+							variant={"contained"}
+							sx={{
+								width: 100,
+								height: 50,
+								backgroundColor: disabled !== id && cycle?.teams?.[id]?.color,
+								"&:hover": {
+									backgroundColor: disabled !== id && cycle?.teams?.[id]?.color,
+								},
+							}}
+							disabled={disabled === id}
+							onClick={() => onChange(value === id ? "" : id)}
+						>
+							<Typography sx={{ mixBlendMode: disabled === id ? "initial" : "difference" }}>
+								{id}
+							</Typography>
+						</Button>
+					);
+				})}
+			</Stack>
+		);
+	}
+
 	return (
 		<AppBarWithDrawer title="Create Game">
-			<Stack direction="row" margin={2} justifyContent="center">
-				<FormControl>
-					<FormLabel id="demo-radio-buttons-group-label">Team 1</FormLabel>
-					<RadioGroup
-						aria-labelledby="demo-radio-buttons-group-label"
-						defaultValue="female"
-						name="radio-buttons-group"
-						onChange={(_, value) => setTeamOne(value)}
-					>
-						{["team1", "team2", "team3"].map((id) => {
-							return (
-								<FormControlLabel
-									disabled={teamTwo === id}
-									value={id}
-									control={<Radio />}
-									label={id}
-								/>
-							);
-						})}
-					</RadioGroup>
-				</FormControl>
-				<FormControl>
-					<FormLabel id="demo-radio-buttons-group-label">Team 2</FormLabel>
-					<RadioGroup
-						aria-labelledby="demo-radio-buttons-group-label"
-						defaultValue="female"
-						name="radio-buttons-group"
-						onChange={(_, value) => setTeamTwo(value)}
-					>
-						{["team1", "team2", "team3"].map((id) => {
-							return (
-								<FormControlLabel
-									value={id}
-									control={<Radio color="secondary" />}
-									label={id}
-									disabled={teamOne === id}
-								/>
-							);
-						})}
-					</RadioGroup>
-				</FormControl>
+			<Typography textAlign={"center"} variant="h3">
+				Select Teams
+			</Typography>
+			<Stack direction="row" gap={2} alignItems="center" justifyContent="center">
+				<Button
+					color="primary"
+					variant={"contained"}
+					sx={{
+						width: 100,
+						height: 50,
+						bgcolor: cycle?.teams?.[teamOne]?.color,
+						"&:hover": {
+							bgcolor: cycle?.teams?.[teamOne]?.color,
+						},
+					}}
+				>
+					<Typography sx={{ mixBlendMode: "difference" }}>{teamOne}</Typography>
+				</Button>
+				<Typography textAlign={"center"} variant="h4">
+					VS
+				</Typography>
+
+				<Button
+					color="primary"
+					variant={"contained"}
+					sx={{
+						width: 100,
+						height: 50,
+						bgcolor: cycle?.teams?.[teamTwo]?.color,
+						"&:hover": {
+							bgcolor: cycle?.teams?.[teamTwo]?.color,
+						},
+					}}
+				>
+					<Typography sx={{ mixBlendMode: "difference" }}>{teamTwo}</Typography>
+				</Button>
+			</Stack>
+			<Divider sx={{ my: 2 }} />
+
+			<Stack direction="row" margin={2} gap={10} justifyContent="center">
+				<RenderTeams
+					onChange={(value) => setTeamOne(value)}
+					value={teamOne}
+					disabled={teamTwo}
+				/>
+				<RenderTeams
+					onChange={(value) => setTeamTwo(value)}
+					value={teamTwo}
+					disabled={teamOne}
+				/>
 			</Stack>
 			<Button onClick={createTeam} variant="contained">
 				Create
