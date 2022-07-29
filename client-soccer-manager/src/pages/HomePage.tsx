@@ -10,8 +10,8 @@ export const HomePage = () => {
 			<Typography variant="body1">1) add some players</Typography>
 			<Typography variant="body1">2) create group</Typography>
 			<Typography variant="body1">3) in your group create new cycle</Typography>
-			<Typography variant="body1">3) in your cycle create new game</Typography>
-			<Typography variant="body1">3) start the game</Typography>
+			<Typography variant="body1">4) in your cycle create new game</Typography>
+			<Typography variant="body1">5) start the game</Typography>
 
 			<Button onClick={() => navigate("/players/create")} variant="contained">
 				Add Players
