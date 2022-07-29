@@ -4,7 +4,7 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import MenuIcon from "@mui/icons-material/Menu";
-import { StoreContext } from "../main";
+import { StoreContext } from "../bootstrap";
 import { Avatar, Button, Menu, MenuItem, Tooltip } from "@mui/material";
 import { useFirebaseApi } from "../firebase-api";
 import { useContext, useState } from "react";

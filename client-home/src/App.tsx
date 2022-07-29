@@ -4,7 +4,7 @@ import "./App.css";
 import { AppBar, Toolbar, useTheme } from "@mui/material";
 import { AppLayout } from "./AppLayout";
 import { useFirebaseApi } from "./firebase-api";
-import { StoreContext } from "./main";
+import { StoreContext } from "./bootstrap";
 
 function App() {
 	const [count, setCount] = useState(0);
